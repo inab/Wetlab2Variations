@@ -4,7 +4,7 @@ Rare disease researchers’ workflow is that they submit their raw data (fastq),
 
 This demonstrator focuses on the variant calling pipeline. The raw genomic data is processed using the RD-Connect pipeline ([Laurie et al., 2016](https://www.ncbi.nlm.nih.gov/pubmed/27604516)) running on the standards (GA4GH) compliant, interoperable container orchestration platform.
 
-This demonstrator will be aligned with the current implementation study on “Development of Architecture for Software Containers at ELIXIR and its use by EXCELERATE use-case communities” https://docs.google.com/document/d/1ScReM5En2CQrKU4VPWUllJTt0rCV4qgA7-HqKJKpoS0/edit# 
+This demonstrator will be aligned with the current implementation study on [Development of Architecture for Software Containers at ELIXIR and its use by EXCELERATE use-case communities](https://docs.google.com/document/d/1ScReM5En2CQrKU4VPWUllJTt0rCV4qgA7-HqKJKpoS0/edit#) 
 
 For this implementation, different steps are required:
 

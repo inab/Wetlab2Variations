@@ -1,0 +1,25 @@
+#################################################################
+# Dockerfile
+#
+# Software:         Cutadapt
+# Software Version: 1.18
+# Description:      Cutadapt image for CNAG
+# Website:          https://cutadapt.readthedocs.io/en/stable/installation.html, http://www.cnag.crg.eu 
+# Provides:         Cutadapt
+
+# Base Image:       frolvlad/alpine-python3:latest
+# Build Cmd:        docker build --rm -t cnag/cutadapt:1.18
+## Pull Cmd:         docker pull cnag/cutadapt:1.18
+# Run Cmd:          docker run --rm cnag/cutadapt:1.18 cutadapt
+#################################################################
+
+# work from alpine-python3
+FROM frolvlad/alpine-python3
+
+# set the environment variables
+ENV version 1.18
+
+# add dependencies and install picard to the base image
+RUN apk upgrade --update && \
+    apk add gcc python3-dev musl-dev && \
+    pip3 install -b /opt/cutadapt/${version} --upgrade cutadapt

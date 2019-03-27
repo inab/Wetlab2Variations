@@ -1,0 +1,4 @@
+class: DockerRequirement
+dockerPull: cnag/fastqc:0.11.8
+dockerFile: >
+  $import: fastc-Dockerfile

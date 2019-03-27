@@ -1,0 +1,47 @@
+#################################################################
+# Dockerfile
+#
+# Software:         GATK
+# Software Version: 3.6-0
+# Description:      GATK image for CNAG
+# Website:          https://software.broadinstitute.org/gatk, http://www.cnag.crg.eu 
+# Provides:         GATK
+
+# Base Image:       anapsix/alpine-java:8u192b12_server-jre
+# Build Cmd:        docker build --rm -t cnag/gatk:3.6-0
+## Pull Cmd:         docker pull cnag/gatk:3.6-0
+# Run Cmd:          docker run --rm cnag/gatk:3.6-0 gatk
+#################################################################
+
+# work from latest LTS ubuntu release
+FROM anapsix/alpine-java:8u192b12_server-jre
+#FROM anapsix/alpine-java:jdk8
+
+# set the environment variables
+ENV maven_package_name apache-maven-3.3.9
+ENV gatk_dir_name gatk-protected
+ENV gatk_version 3.6-0-g89b7209
+ENV gatk_short_version 3.6-0
+
+#https://software.broadinstitute.org/gatk/download/auth?package=GATK-archive&version=3.6-0-g89b7209
+#https://software.broadinstitute.org/gatk/download/auth?package=GATK-archive&version=3.7-0-gcfedb67
+#https://software.broadinstitute.org/gatk/download/auth?package=GATK-archive&version=3.8-0-ge9d806836
+#https://software.broadinstitute.org/gatk/download/auth?package=GATK-archive&version=3.8-1-0-gf15c1c3ef
+
+# download picard tools and change permissions
+RUN apk upgrade --update && \
+    apk add curl && \
+    apk add R && \
+    curl -k "http://mirror.nohup.it/apache/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip" --output /tmp/apache-maven-3.3.9-bin.zip && \
+    curl -k "https://software.broadinstitute.org/gatk/download/auth?package=GATK-archive&version=${gatk_version}" --output /tmp/${gatk_short_version}.tar.bz2 && \
+    mkdir -p /opt/maven && \
+    mkdir -p /opt/gatk/${gatk_short_version} && \
+    cd /opt/maven && \
+    unzip /tmp/${maven_package_name}-bin.zip && \
+    rm -rf /tmp/${maven_package_name}-bin.zip LICENSE NOTICE README.txt && \
+    cd /opt/gatk/${gatk_short_version} && \
+    tar -xjvf /tmp/${gatk_short_version}.tar.bz2 && \
+    rm -rf /tmp/${gatk_short_version}.tar.bz2 resources && \
+    chmod 0644 /opt/gatk/${gatk_short_version}/GenomeAnalysisTK.jar && \
+    bash -c 'echo -e "#!/bin/bash\njava -jar /opt/gatk/${gatk_short_version}/GenomeAnalysisTK.jar \$@" > /usr/local/bin/gatk' && \
+    chmod +x /usr/local/bin/gatk

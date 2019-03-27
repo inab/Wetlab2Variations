@@ -1,0 +1,29 @@
+#################################################################
+# Dockerfile
+#
+# Software:         FastQC
+# Software Version: 0.11.8
+# Description:      FastQC image for CNAG
+# Website:          https://github.com/s-andrews/FastQC/, http://www.cnag.crg.eu 
+# Provides:         FastQC
+
+# Base Image:       anapsix/alpine-java:8u192b12_server-jre
+# Build Cmd:        docker build --rm -t cnag/fastqc:0.11.8
+## Pull Cmd:         docker pull cnag/fastqc:0.11.8
+# Run Cmd:          docker run --rm cnag/fastqc:0.11.8 fastqc
+#################################################################
+
+# work from alpine-java
+FROM anapsix/alpine-java:8u192b12_server-jre
+
+# set the environment variables
+ENV version 0.11.8
+
+# add perl to the base image
+RUN apk add perl && \
+    mkdir -p /opt/fastqc && \
+    cd /opt/fastqc && \
+    wget -q https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v${version}.zip -O FastQC-v${version}.zip && \
+    unzip FastQC-v${version}.zip && \
+    rm FastQC-v${version}.zip && \
+    chmod +x FastQC/fastqc

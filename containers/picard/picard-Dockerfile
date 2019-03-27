@@ -1,0 +1,29 @@
+#################################################################
+# Dockerfile
+#
+# Software:         picard
+# Software Version: 2.18.25
+# Description:      picard image for CNAG
+# Website:          https://github.com/broadinstitute/picard/, http://www.cnag.crg.eu 
+# Provides:         picard
+
+# Base Image:       anapsix/alpine-java:8u192b12_server-jre
+# Build Cmd:        docker build --rm -t cnag/picard:2.18.25
+## Pull Cmd:         docker pull cnag/picard:2.18.25
+# Run Cmd:          docker run --rm cnag/picard:2.18.25 picard
+#################################################################
+
+# work from alpine-java
+FROM anapsix/alpine-java:8u192b12_server-jre
+
+# set the environment variables
+ENV version 2.18.25
+
+# add dependencies and install picard to the base image
+RUN apk upgrade --update && \
+    apk add R && \
+    mkdir -p /opt/picard/${version} && \
+    wget -q https://github.com/broadinstitute/picard/releases/download/${version}/picard.jar -O /opt/picard/${version}/picard.jar && \
+    chmod 0644 /opt/picard/${version}/picard.jar && \
+    bash -c "echo -e '#!/bin/bash\njava -jar /opt/picard/${version}/picard.jar \$@' > /usr/local/bin/picard" && \
+    chmod +x /usr/local/bin/picard

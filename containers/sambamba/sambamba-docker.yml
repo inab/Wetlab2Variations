@@ -1,0 +1,4 @@
+class: DockerRequirement
+dockerPull: cnag/sambamba:0.6.8
+dockerFile: >
+  $import: sambamba-Dockerfile

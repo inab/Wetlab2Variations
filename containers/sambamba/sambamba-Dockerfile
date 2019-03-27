@@ -1,0 +1,31 @@
+#################################################################
+# Dockerfile
+#
+# Software:         Sambamba
+# Software Version: 0.6.8
+# Description:      Sambamba image for CNAG
+# Website:          https://github.com/biod/sambamba/, http://www.cnag.crg.eu 
+# Provides:         Sambamba
+
+# Base Image:       alpine:3.8
+# Build Cmd:        docker build --rm -t cnag/sambamba:0.6.8
+## Pull Cmd:         docker pull cnag/sambamba:0.6.8
+# Run Cmd:          docker run --rm cnag/sambamba:0.6.8 sambamba
+#################################################################
+
+# work from alpine
+FROM alpine:3.8
+
+# set the environment variables
+ENV version 0.6.8
+
+# add dependencies and install sambamba to the base image
+RUN apk upgrade --update && \
+    apk add bash &&\
+    mkdir -p /opt/sambamba/${version} && \
+    cd /opt/sambamba/${version} && \
+    wget -q https://github.com/biod/sambamba/releases/download/v${version}/sambamba-${version}-linux-static.gz -O sambamba-${version}.gz && \
+    gzip -d sambamba-${version}.gz && \
+    chmod 755 sambamba-${version} && \
+    bash -c "echo -e '#!/bin/bash\n/opt/sambamba/${version}/sambamba-${version} \$@' > /usr/local/bin/sambamba" && \
+    chmod 755 /usr/local/bin/sambamba

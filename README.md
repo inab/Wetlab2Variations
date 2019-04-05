@@ -26,42 +26,42 @@ Detailed information about the RD-Connect pipeline can be found in [Laurie et al
 
 1. **Name of the application: Adaptor removal**  
 Function: remove sequencing adaptors   
-Container (readiness status, location, version): cutadapt (v.1.18, already in CWL)  
+Container (readiness status, location, version): [cutadapt (v.1.18)](https://hub.docker.com/r/cnag/cutadapt)  
 Required resources in cores and RAM: current container size 169MB  
 Input data (amount, format, directory..): raw fastq  
 Output data: paired fastq without adaptors  
 
 2. **Name of the application: Mapping and bam sorting**  
 Function: align data to reference genome  
-Container : bwa-mem (v.0.7.17) / Sambamba (v. 0.6.8 )(or samtools)  
+Container : [bwa-mem (v.0.7.17)](https://hub.docker.com/r/cnag/bwa) / [Sambamba (v. 0.6.8 )](https://hub.docker.com/r/cnag/sambamba)(or samtools)  
 Resources :current container size 111MB / 32MB  
 Input data: paired fastq without adaptors  
 Output data: sorted bam  
 
 3. **Name of the application: MarkDuplicates**  
 Function: Mark (and remove) duplicates  
-Container: Picard (v.2.18.25)  
+Container: [Picard (v.2.18.25)](https://hub.docker.com/r/cnag/picard)
 Resources: current container size 261MB  
 Input data:sorted bam  
 Output data: Sorted bam with marked (or removed) duplicates  
 
 4. **Name of the application: Base quality recalibration (BQSR)**  
 Function: Base quality recalibration  
-Container: GATK (v.3.6-0)  
+Container: [GATK (v.3.6-0)](https://hub.docker.com/r/cnag/gatk)
 Resources: current container size 270MB  
 Input data: Sorted bam with marked (or removed) duplicates  
 Output data: Sorted bam with marked duplicates & base quality recalculated  
 
 5. **Name of the application: Variant calling**  
 Function: variant calling  
-Container: GATK (v.3.6-0)  
+Container: [GATK (v.3.6-0)](https://hub.docker.com/r/cnag/gatk)
 Resources: current container size 270MB  
 Input data:Sorted bam with marked duplicates & base quality recalculated  
 Output data: unannotated gvcf per sample  
 
 6. **(OPTIONAL)Name of the application: Quality of the fastq**  
 Function: report on the sequencing quality  
-Container: fastqc 0.11.8                  
+Container: [fastqc 0.11.8](https://hub.docker.com/r/cnag/fastqc)
 Resources: current container size 173MB  
 Input data: raw fastq  
 Output data: QC report 

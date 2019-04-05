@@ -66,7 +66,7 @@ Resources: current container size 173MB
 Input data: raw fastq  
 Output data: QC report 
 
-![image](https://drive.google.com/file/d/1OdPKOHDTMTtUBU7YhB_wvdVMeeBXJ1pr/view?usp=sharing)
+![image](https://drive.google.com/uc?export=view&id=1lrcy-TIwf5emBEQqa4TdWiO0fjJszPHR)
 
 ## Licensing
 

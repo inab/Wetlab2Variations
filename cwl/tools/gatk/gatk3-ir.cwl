@@ -2,11 +2,11 @@ class: CommandLineTool
 cwlVersion: v1.0
 $namespaces:
   sbg: 'https://www.sevenbridges.com/'
-id: rtc
+id: ir
 baseCommand:
   - gatk
   - '-T'
-  - RealignerTargetCreator
+  - IndelRealigner
 inputs:
   - id: input
     type:
@@ -16,30 +16,32 @@ inputs:
     inputBinding:
       position: 2
       prefix: '-I'
-  - id: rtc_intervals_name
+  - id: rtc_intervals
     type: File
     inputBinding:
       position: 3
-      prefix: '-O'
+      prefix: '-targetIntervals'
   - id: reference_genome
     type: File
     inputBinding:
       position: 1
       prefix: '-R'
-  - id: known_indels
-    type:
-      - 'null'
-      - File
-      - type: array
-        items: File
-    inputBinding:
-      position: 4
-      prefix: '--known'
-outputs:
-  - id: rtc_intervals_file
+  - id: realigned_bam_name
     type: File?
-label: rtc
+    inputBinding:
+      position: 3
+      prefix: '-O'
+outputs:
+  - id: realigned_bam
+    type: File
+    secondaryFiles:
+      - ^.bai
+
+label: ir
 arguments:
   - position: 5
     prefix: '-dt'
-    valueFrom: NONE
+    valueFrom: 'NONE'
+  - position: 6
+    prefix: '-maxReadsForRealignment'
+    valueFrom: '200000'

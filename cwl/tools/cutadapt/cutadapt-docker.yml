@@ -1,0 +1,4 @@
+class: DockerRequirement
+dockerPull: cnag/cutadapt:1.18
+dockerFile: >
+  $import: cutadapt-Dockerfile

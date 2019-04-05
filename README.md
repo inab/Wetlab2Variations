@@ -64,7 +64,7 @@ Function: report on the sequencing quality
 Container: fastqc 0.11.8                  
 Resources: current container size 173MB  
 Input data: raw fastq  
-Output data: QC report  
+Output data: QC report 
 
 ![image](https://drive.google.com/file/d/1OdPKOHDTMTtUBU7YhB_wvdVMeeBXJ1pr/view?usp=sharing)
 

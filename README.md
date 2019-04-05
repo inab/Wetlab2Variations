@@ -66,7 +66,7 @@ Resources: current container size 173MB
 Input data: raw fastq  
 Output data: QC report  
 
-![image](https://drive.google.com/file/d/1K5Pa3GOvxgfrMajseFPIIqoILyHtEnmH/view?usp=sharing)
+![image](https://drive.google.com/file/d/1bMZJuuYjWUfdLhuu5W1N7c8ERpvyo9-3/view?usp=sharing)
 ## Licensing
 
 GATK declares that archived packages are made available for free to academic researchers under a limited license for non-commercial use. If you need to use one of these packages for commercial use. https://software.broadinstitute.org/gatk/download/archive 

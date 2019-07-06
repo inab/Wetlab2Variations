@@ -1,0 +1,55 @@
+language: ruby
+
+services:
+  - docker
+
+jobs:
+  include:
+    - stage: build-cutadapt
+      script:
+        - docker build -t cnag/cutadapt:1.18 -f containers/cutadapt/cutadapt-Dockerfile .
+      deploy:
+        provider: script
+        script: bash scripts/docker_push.sh cnag/cutadapt:1.18
+        on:
+          branch: containers
+    - stage: build-bwa
+      script:
+        - docker build -t cnag/bwa:0.7.17 -f containers/bwa/bwa-Dockerfile .
+      deploy:
+        provider: script
+        script: bash scripts/docker_push.sh cnag/bwa:0.7.17
+        on:
+          branch: containers
+    - stage: build-picard
+      script:
+        - docker build -t cnag/picard:2.18.25 -f containers/picard/picard-Dockerfile .
+      deploy:
+        provider: script
+        script: bash scripts/docker_push.sh cnag/picard:2.18.25
+        on:
+          branch: containers
+    - stage: build-gatk
+      script:
+        - docker build -t cnag/gatk:3.6-0 -f containers/gatk/gatk3-Dockerfile .
+      deploy:
+        provider: script
+        script: bash scripts/docker_push.sh cnag/gatk:3.6-0
+        on:
+          branch: containers
+    - stage: build-fastqc
+      script:
+        - docker build -t cnag/fastqc:0.11.8 -f containers/fastqc/fastqc-Dockerfile .
+      deploy:
+        provider: script
+        script: bash scripts/docker_push.sh cnag/fastqc:0.11.8
+        on:
+          branch: containers
+    - stage: build-sambamba
+      script:
+        - docker build -t cnag/sambamba:0.6.8 -f containers/sambamba/sambamba-Dockerfile .
+      deploy:
+        provider: script
+        script: bash scripts/docker_push.sh cnag/sambamba:0.6.8
+        on:
+          branch: containers

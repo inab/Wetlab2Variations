@@ -1,4 +1,5 @@
-
+In order to test the pipeline we decided to use the Coriell CEPH/UTAH 1463  study and the NA12878 dataset. This dataset is commonly  used as a standard reference for genomic benchmarking activities supported by international initiatives such as the Global Alliance for Genomic and Health (GA4GH) and Genome in a Bottle (GIAB).
+The subset of genomic files can be downloaded here
 
 ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/NA12878/NIST_NA12878_HG001_HiSeq_300x/140407_D00360_0017_BH947YADXX/Project_RM8398/Sample_U5c/U5c_CCGTCC_L001_R1_001.fastq.gz
 ftp://ftp-trace.ncbi.nih.gov/giab/ftp/data/NA12878/NIST_NA12878_HG001_HiSeq_300x/140407_D00360_0017_BH947YADXX/Project_RM8398/Sample_U5c/U5c_CCGTCC_L001_R2_001.fastq.gz

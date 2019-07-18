@@ -1,0 +1,81 @@
+<?xml version="1.0"?>
+<tool id="picard-CreateSequenceDictionary" name="picard-CreateSequenceDictionary" version="0.1.0" python_template_version="3.5">
+    <requirements>
+        <container type="docker">cnag/picard:2.18.25</container>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        #set $localref = 'reference.fa'
+        ln -s '$reference' '$localref' &&
+        java -jar /opt/picard/2.18.25/picard.jar CreateSequenceDictionary  R=$localref O=tempfile &&
+        mv tempfile $output
+    ]]></command>
+    <inputs>
+        <param type="data" name="reference" format="fasta" label="Reference Genome"/>
+    </inputs>
+    <outputs>
+        <data name="output" format="sam" label="Reference Genome dictionary"/>
+    </outputs>
+    <help><![CDATA[
+
+R=reference.fasta \
+O=reference.dict
+
+
+Version: 2.18.25-SNAPSHOT
+
+
+Options:
+
+--help
+-h                            Displays options specific to this tool.
+
+--stdhelp
+-H                            Displays options specific to this tool AND options common to all Picard command line
+                              tools.
+
+--version                     Displays program version.
+
+OUTPUT=File
+O=File                        Output SAM file containing only the sequence dictionary. By default it will use the base
+                              name of the input reference with the .dict extension  Default value: null.
+
+GENOME_ASSEMBLY=String
+AS=String                     Put into AS field of sequence dictionary entry if supplied  Default value: null.
+
+URI=String
+UR=String                     Put into UR field of sequence dictionary entry.  If not supplied, input reference file is
+                              used  Default value: null.
+
+SPECIES=String
+SP=String                     Put into SP field of sequence dictionary entry  Default value: null.
+
+TRUNCATE_NAMES_AT_WHITESPACE=Boolean
+                              Make sequence name the first word from the > line in the fasta file.  By default the
+                              entire contents of the > line is used, excluding leading and trailing whitespace.  Default
+                              value: true. This option can be set to 'null' to clear the default value. Possible values:
+                              {true, false}
+
+NUM_SEQUENCES=Integer         Stop after writing this many sequences.  For testing.  Default value: 2147483647. This
+                              option can be set to 'null' to clear the default value.
+
+ALT_NAMES=File
+AN=File                       Optional file containing the alternative names for the contigs. Tools may use this
+                              information to consider different contig notations as identical (e.g: 'chr1' and '1'). The
+                              alternative names will be put into the appropriate @AN annotation for each contig. No
+                              header. First column is the original name, the second column is an alternative name. One
+                              contig may have more than one alternative name.  Default value: null.
+
+REFERENCE=File
+R=File                        Input reference fasta or fasta.gz  Required.
+    ]]></help>
+<citations>
+    <citation type="bibtex">@misc{Picard,
+            author = {Broad Institute},
+            title = {Picard},
+            publisher = {GitHub},
+            journal = { Broad Institute, GitHub repository},
+            url = {http://broadinstitute.github.io/picard/}
+        }
+    </citation>
+ </citations> 
+</tool>

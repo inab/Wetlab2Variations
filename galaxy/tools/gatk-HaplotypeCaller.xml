@@ -1,0 +1,406 @@
+<?xml version="1.0"?>
+<tool id="gatk-HaplotypeCaller" name="gatk-HaplotypeCaller" version="0.1.0" python_template_version="3.5">
+    <requirements>
+        <container type="docker">cnag/gatk:3.6-0</container>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+    #set $localinput = 'input.bam'
+    #set $localbai = 'input.bam.bai'
+    #set $localfai = 'reference.fa.fai'
+    #set $localref = 'reference.fa'
+    #set $localdict = 'reference.dict'
+    ln -s '$input' '$localinput' &&
+    ln -s '$input_bai' '$localbai' &&
+    ln -s '$reference' '$localref' &&
+    ln -s '$reference_fai' '$localfai' &&
+    ln -s '$reference_dict' '$localdict' &&
+    java -jar /opt/gatk/3.6-0/GenomeAnalysisTK.jar -T HaplotypeCaller 
+    -dt NONE -rf BadCigar -ERC GVCF --never_trim_vcf_format_field 
+    -variant_index_type LINEAR -variant_index_parameter 128000
+    -R $localref -I $localinput -o $output
+    ]]></command>
+    <inputs>
+        <param type="data" name="reference" format="fasta" label="Reference Genome"/>
+        <param type="data" name="reference_fai" format="fai" label="Reference Genome index"/>
+        <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
+        <param type="data" name="input" format="bam" label="Input BAM"/>
+        <param type="data" name="input_bai" format="bai" label="Input BAM index"/>
+    </inputs>
+    <outputs>
+        <data name="output" format="gvcf" label="Raw Variants"/>
+    </outputs>
+    <help><![CDATA[
+--------------------------------------------------------------------------------
+The Genome Analysis Toolkit (GATK) v3.6-0-g89b7209, Compiled 2016/06/01 22:27:29
+Copyright (c) 2010-2016 The Broad Institute
+For support and documentation go to https://www.broadinstitute.org/gatk
+[Thu Jul 11 13:42:21 GMT 2019] Executing on Linux 4.9.125-linuxkit amd64
+Java HotSpot(TM) 64-Bit Server VM 1.8.0_192-b12 JdkDeflater
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+usage: java -jar GenomeAnalysisTK.jar -T <analysis_type> [-args <arg_file>] [-I <input_file>] [--showFullBamList] [-rbs
+       <read_buffer_size>] [-rf <read_filter>] [-drf <disable_read_filter>] [-L <intervals>] [-XL <excludeIntervals>] [-isr
+       <interval_set_rule>] [-im <interval_merging>] [-ip <interval_padding>] [-R <reference_sequence>] [-ndrs] [-maxRuntime
+       <maxRuntime>] [-maxRuntimeUnits <maxRuntimeUnits>] [-dt <downsampling_type>] [-dfrac <downsample_to_fraction>] [-dcov
+       <downsample_to_coverage>] [-baq <baq>] [-baqGOP <baqGapOpenPenalty>] [-fixNDN] [-fixMisencodedQuals]
+       [-allowPotentiallyMisencodedQuals] [-OQ] [-DBQ <defaultBaseQualities>] [-PF <performanceLog>] [-BQSR <BQSR>] [-qq
+       <quantize_quals>] [-SQQ <static_quantized_quals>] [-DIQ] [-EOQ] [-preserveQ <preserve_qscores_less_than>]
+       [-globalQScorePrior <globalQScorePrior>] [-S <validation_strictness>] [-rpr] [-kpr] [-sample_rename_mapping_file
+       <sample_rename_mapping_file>] [-U <unsafe>] [-disable_auto_index_creation_and_locking_when_reading_rods] [-sites_only]
+       [-writeFullFormat] [-compress <bam_compression>] [-simplifyBAM] [--disable_bam_indexing] [--generate_md5] [-nt
+       <num_threads>] [-nct <num_cpu_threads_per_data_thread>] [-mte] [-rgbl <read_group_black_list>] [-ped <pedigree>]
+       [-pedString <pedigreeString>] [-pedValidationType <pedigreeValidationType>] [-variant_index_type <variant_index_type>]
+       [-variant_index_parameter <variant_index_parameter>] [-ref_win_stop <reference_window_stop>] [-l <logging_level>] [-log
+       <log_to_file>] [-h] [-version] [-mmq <min_mapping_quality_score>] [-o <out>] [-D <dbsnp>] [-dontTrimActiveRegions]
+       [-comp <comp>] [-A <annotation>] [-XA <excludeAnnotation>] [-G <group>] [-debug] [-useFilteredReadsForAnnotations] [-ERC
+       <emitRefConfidence>] [-bamout <bamOutput>] [-bamWriterType <bamWriterType>] [-edr] [-disableOptimizations] [-nda] [-hets
+       <heterozygosity>] [-indelHeterozygosity <indel_heterozygosity>] [-stand_call_conf
+       <standard_min_confidence_threshold_for_calling>] [-stand_emit_conf <standard_min_confidence_threshold_for_emitting>]
+       [-maxAltAlleles <max_alternate_alleles>] [-maxNumPLValues <max_num_PL_values>] [-inputPrior <input_prior>] [-ploidy
+       <sample_ploidy>] [-gt_mode <genotyping_mode>] [-alleles <alleles>] [-contamination <contamination_fraction_to_filter>]
+       [-contaminationFile <contamination_fraction_per_sample_file>] [-out_mode <output_mode>] [-allSitePLs] [-gcpHMM <gcpHMM>]
+       [-globalMAPQ <phredScaledGlobalReadMismappingRate>] [-sn <sample_name>] [-kmerSize <kmerSize>]
+       [-dontIncreaseKmerSizesForCycles] [-allowNonUniqueKmersInRef] [-numPruningSamples <numPruningSamples>]
+       [-minDanglingBranchLength <minDanglingBranchLength>] [-consensus] [-maxNumHaplotypesInPopulation
+       <maxNumHaplotypesInPopulation>] [-minPruning <minPruning>] [-graph <graphOutput>] [-GQB <GVCFGQBands>] [-ERCIS
+       <indelSizeToEliminateInRefModel>] [-mbq <min_base_quality_score>] [-allelesTrigger] [-doNotRunPhysicalPhasing]
+       [-dontUseSoftClippedBases] [-pcrModel <pcr_indel_model>] [-maxReadsInRegionPerSample <maxReadsInRegionPerSample>]
+       [-minReadsPerAlignStart <minReadsPerAlignmentStart>] [-APO <activityProfileOut>] [-ARO <activeRegionOut>] [-AR
+       <activeRegionIn>] [-activeRegionExtension <activeRegionExtension>] [-forceActive] [-activeRegionMaxSize
+       <activeRegionMaxSize>] [-bandPassSigma <bandPassSigma>] [-ActProbThresh <activeProbabilityThreshold>] [-filterRNC]
+       [-filterMBQ] [-filterNoBases]
+
+ -T,--analysis_type <analysis_type>                                                       Name of the tool to run
+ -args,--arg_file <arg_file>                                                              Reads arguments from the
+                                                                                          specified file
+ -I,--input_file <input_file>                                                             Input file containing sequence
+                                                                                          data (BAM or CRAM)
+ --showFullBamList                                                                        Emit list of input BAM/CRAM
+                                                                                          files to log
+ -rbs,--read_buffer_size <read_buffer_size>                                               Number of reads per SAM file
+                                                                                          to buffer in memory
+ -rf,--read_filter <read_filter>                                                          Filters to apply to reads
+                                                                                          before analysis
+ -drf,--disable_read_filter <disable_read_filter>                                         Read filters to disable
+ -L,--intervals <intervals>                                                               One or more genomic intervals
+                                                                                          over which to operate
+ -XL,--excludeIntervals <excludeIntervals>                                                One or more genomic intervals
+                                                                                          to exclude from processing
+ -isr,--interval_set_rule <interval_set_rule>                                             Set merging approach to use
+                                                                                          for combining interval inputs
+                                                                                          (UNION|INTERSECTION)
+ -im,--interval_merging <interval_merging>                                                Interval merging rule for
+                                                                                          abutting intervals (ALL|
+                                                                                          OVERLAPPING_ONLY)
+ -ip,--interval_padding <interval_padding>                                                Amount of padding (in bp) to
+                                                                                          add to each interval
+ -R,--reference_sequence <reference_sequence>                                             Reference sequence file
+ -ndrs,--nonDeterministicRandomSeed                                                       Use a non-deterministic random
+                                                                                          seed
+ -maxRuntime,--maxRuntime <maxRuntime>                                                    Stop execution cleanly as soon
+                                                                                          as maxRuntime has been reached
+ -maxRuntimeUnits,--maxRuntimeUnits <maxRuntimeUnits>                                     Unit of time used by
+                                                                                          maxRuntime (NANOSECONDS|
+                                                                                          MICROSECONDS|MILLISECONDS|
+                                                                                          SECONDS|MINUTES|HOURS|DAYS)
+ -dt,--downsampling_type <downsampling_type>                                              Type of read downsampling to
+                                                                                          employ at a given locus (NONE|
+                                                                                          ALL_READS|BY_SAMPLE)
+ -dfrac,--downsample_to_fraction <downsample_to_fraction>                                 Fraction of reads to
+                                                                                          downsample to
+ -dcov,--downsample_to_coverage <downsample_to_coverage>                                  Target coverage threshold for
+                                                                                          downsampling to coverage
+ -baq,--baq <baq>                                                                         Type of BAQ calculation to
+                                                                                          apply in the engine (OFF|
+                                                                                          CALCULATE_AS_NECESSARY|
+                                                                                          RECALCULATE)
+ -baqGOP,--baqGapOpenPenalty <baqGapOpenPenalty>                                          BAQ gap open penalty
+ -fixNDN,--refactor_NDN_cigar_string                                                      Reduce NDN elements in CIGAR
+                                                                                          string
+ -fixMisencodedQuals,--fix_misencoded_quality_scores                                      Fix mis-encoded base quality
+                                                                                          scores
+ -allowPotentiallyMisencodedQuals,--allow_potentially_misencoded_quality_scores           Ignore warnings about base
+                                                                                          quality score encoding
+ -OQ,--useOriginalQualities                                                               Use the base quality scores
+                                                                                          from the OQ tag
+ -DBQ,--defaultBaseQualities <defaultBaseQualities>                                       Assign a default base quality
+ -PF,--performanceLog <performanceLog>                                                    Write GATK runtime performance
+                                                                                          log to this file
+ -BQSR,--BQSR <BQSR>                                                                      Input covariates table file
+                                                                                          for on-the-fly base quality
+                                                                                          score recalibration
+ -qq,--quantize_quals <quantize_quals>                                                    Quantize quality scores to a
+                                                                                          given number of levels (with
+                                                                                          -BQSR)
+ -SQQ,--static_quantized_quals <static_quantized_quals>                                   Use static quantized quality
+                                                                                          scores to a given number of
+                                                                                          levels (with -BQSR)
+ -DIQ,--disable_indel_quals                                                               Disable printing of base
+                                                                                          insertion and deletion tags
+                                                                                          (with -BQSR)
+ -EOQ,--emit_original_quals                                                               Emit the OQ tag with the
+                                                                                          original base qualities (with
+                                                                                          -BQSR)
+ -preserveQ,--preserve_qscores_less_than <preserve_qscores_less_than>                     Don't recalibrate bases with
+                                                                                          quality scores less than this
+                                                                                          threshold (with -BQSR)
+ -globalQScorePrior,--globalQScorePrior <globalQScorePrior>                               Global Qscore Bayesian prior
+                                                                                          to use for BQSR
+ -S,--validation_strictness <validation_strictness>                                       How strict should we be with
+                                                                                          validation (STRICT|LENIENT|
+                                                                                          SILENT)
+ -rpr,--remove_program_records                                                            Remove program records from
+                                                                                          the SAM header
+ -kpr,--keep_program_records                                                              Keep program records in the
+                                                                                          SAM header
+ -sample_rename_mapping_file,--sample_rename_mapping_file <sample_rename_mapping_file>    Rename sample IDs on-the-fly
+                                                                                          at runtime using the provided
+                                                                                          mapping file
+ -U,--unsafe <unsafe>                                                                     Enable unsafe operations:
+                                                                                          nothing will be checked at
+                                                                                          runtime (ALLOW_N_CIGAR_READS|
+                                                                                          ALLOW_UNINDEXED_BAM|
+                                                                                          ALLOW_UNSET_BAM_SORT_ORDER|
+                                                                                          NO_READ_ORDER_VERIFICATION|
+                                                                                          ALLOW_SEQ_DICT_INCOMPATIBILITY|
+                                                                                          LENIENT_VCF_PROCESSING|ALL)
+d_locking_when_reading_rods,--disable_auto_index_creation_and_locking_when_reading_rods   Disable both auto-generation
+                                                                                          of index files and index file
+                                                                                          locking
+ -sites_only,--sites_only                                                                 Output sites-only VCF
+ -writeFullFormat,--never_trim_vcf_format_field                                           Always output all the records
+                                                                                          in VCF FORMAT fields, even if
+                                                                                          some are missing
+ -compress,--bam_compression <bam_compression>                                            Compression level to use for
+                                                                                          writing BAM files (0 - 9,
+                                                                                          higher is more compressed)
+ -simplifyBAM,--simplifyBAM                                                               Strip down read content and
+                                                                                          tags
+ --disable_bam_indexing                                                                   Turn off on-the-fly creation
+                                                                                          of indices for output BAM/CRAM
+                                                                                          files
+ --generate_md5                                                                           Enable on-the-fly creation of
+                                                                                          md5s for output BAM files.
+ -nt,--num_threads <num_threads>                                                          Number of data threads to
+                                                                                          allocate to this analysis
+ -nct,--num_cpu_threads_per_data_thread <num_cpu_threads_per_data_thread>                 Number of CPU threads to
+                                                                                          allocate per data thread
+ -mte,--monitorThreadEfficiency                                                           Enable threading efficiency
+                                                                                          monitoring
+ -rgbl,--read_group_black_list <read_group_black_list>                                    Exclude read groups based on
+                                                                                          tags
+ -ped,--pedigree <pedigree>                                                               Pedigree files for samples
+ -pedString,--pedigreeString <pedigreeString>                                             Pedigree string for samples
+ -pedValidationType,--pedigreeValidationType <pedigreeValidationType>                     Validation strictness for
+                                                                                          pedigree (STRICT|SILENT)
+ -variant_index_type,--variant_index_type <variant_index_type>                            Type of IndexCreator to use
+                                                                                          for VCF/BCF indices
+                                                                                          (DYNAMIC_SEEK|DYNAMIC_SIZE|
+                                                                                          LINEAR|INTERVAL)
+ -variant_index_parameter,--variant_index_parameter <variant_index_parameter>             Parameter to pass to the
+                                                                                          VCF/BCF IndexCreator
+ -ref_win_stop,--reference_window_stop <reference_window_stop>                            Reference window stop
+ -l,--logging_level <logging_level>                                                       Set the minimum level of
+                                                                                          logging
+ -log,--log_to_file <log_to_file>                                                         Set the logging location
+ -h,--help                                                                                Generate the help message
+ -version,--version                                                                       Output version information
+
+Arguments for HCMappingQualityFilter:
+ -mmq,--min_mapping_quality_score <min_mapping_quality_score>   Minimum read mapping quality required to consider a read
+                                                                for analysis with the HaplotypeCaller
+
+Arguments for HaplotypeCaller:
+ -o,--out <out>                                                                           File to which variants should
+                                                                                          be written
+ -D,--dbsnp <dbsnp>                                                                       dbSNP file
+ -dontTrimActiveRegions,--dontTrimActiveRegions                                           If specified, we will not trim
+                                                                                          down the active region from
+                                                                                          the full region (active +
+                                                                                          extension) to just the active
+                                                                                          interval for genotyping
+ -comp,--comp <comp>                                                                      Comparison VCF file
+ -A,--annotation <annotation>                                                             One or more specific
+                                                                                          annotations to apply to
+                                                                                          variant calls
+ -XA,--excludeAnnotation <excludeAnnotation>                                              One or more specific
+                                                                                          annotations to exclude
+ -G,--group <group>                                                                       One or more classes/groups of
+                                                                                          annotations to apply to
+                                                                                          variant calls
+ -debug,--debug                                                                           Print out very verbose debug
+                                                                                          information about each
+                                                                                          triggering active region
+ -useFilteredReadsForAnnotations,--useFilteredReadsForAnnotations                         Use the contamination-filtered
+                                                                                          read maps for the purposes of
+                                                                                          annotating variants
+ -ERC,--emitRefConfidence <emitRefConfidence>                                             Mode for emitting reference
+                                                                                          confidence scores (NONE|
+                                                                                          BP_RESOLUTION|GVCF)
+ -bamout,--bamOutput <bamOutput>                                                          File to which assembled
+                                                                                          haplotypes should be written
+ -bamWriterType,--bamWriterType <bamWriterType>                                           Which haplotypes should be
+                                                                                          written to the BAM
+                                                                                          (ALL_POSSIBLE_HAPLOTYPES|
+                                                                                          CALLED_HAPLOTYPES)
+ -edr,--emitDroppedReads                                                                  Emit reads that are dropped
+                                                                                          for filtering, trimming,
+                                                                                          realignment failure
+ -disableOptimizations,--disableOptimizations                                             Don't skip calculations in
+                                                                                          ActiveRegions with no variants
+ -nda,--annotateNDA                                                                       If provided, we will annotate
+                                                                                          records with the number of
+                                                                                          alternate alleles that were
+                                                                                          discovered (but not
+                                                                                          necessarily genotyped) at a
+                                                                                          given site
+ -hets,--heterozygosity <heterozygosity>                                                  Heterozygosity value used to
+                                                                                          compute prior likelihoods for
+                                                                                          any locus
+ -indelHeterozygosity,--indel_heterozygosity <indel_heterozygosity>                       Heterozygosity for indel
+                                                                                          calling
+ -stand_call_conf,--standard_min_confidence_threshold_for_calling                         The minimum phred-scaled
+<standard_min_confidence_threshold_for_calling>                                           confidence threshold at which
+                                                                                          variants should be called
+ -stand_emit_conf,--standard_min_confidence_threshold_for_emitting                        The minimum phred-scaled
+<standard_min_confidence_threshold_for_emitting>                                          confidence threshold at which
+                                                                                          variants should be emitted
+                                                                                          (and filtered with LowQual if
+                                                                                          less than the calling
+                                                                                          threshold)
+ -maxAltAlleles,--max_alternate_alleles <max_alternate_alleles>                           Maximum number of alternate
+                                                                                          alleles to genotype
+ -maxNumPLValues,--max_num_PL_values <max_num_PL_values>                                  Maximum number of PL values to
+                                                                                          output
+ -inputPrior,--input_prior <input_prior>                                                  Input prior for calls
+ -ploidy,--sample_ploidy <sample_ploidy>                                                  Ploidy (number of chromosomes)
+                                                                                          per sample. For pooled data,
+                                                                                          set to (Number of samples in
+                                                                                          each pool * Sample Ploidy).
+ -gt_mode,--genotyping_mode <genotyping_mode>                                             Specifies how to determine the
+                                                                                          alternate alleles to use for
+                                                                                          genotyping (DISCOVERY|
+                                                                                          GENOTYPE_GIVEN_ALLELES)
+ -alleles,--alleles <alleles>                                                             The set of alleles at which to
+                                                                                          genotype when
+                                                                                          --genotyping_mode is
+                                                                                          GENOTYPE_GIVEN_ALLELES
+ -contamination,--contamination_fraction_to_filter <contamination_fraction_to_filter>     Fraction of contamination in
+                                                                                          sequencing data (for all
+                                                                                          samples) to aggressively
+                                                                                          remove
+ -contaminationFile,--contamination_fraction_per_sample_file                              Tab-separated File containing
+<contamination_fraction_per_sample_file>                                                  fraction of contamination in
+                                                                                          sequencing data (per sample)
+                                                                                          to aggressively remove. Format
+                                                                                          should be
+                                                                                          SampleID><TAB><Contamination>"
+                                                                                          (Contamination is double) per
+                                                                                          line; No header.
+ -out_mode,--output_mode <output_mode>                                                    Specifies which type of calls
+                                                                                          we should output
+                                                                                          (EMIT_VARIANTS_ONLY|
+                                                                                          EMIT_ALL_CONFIDENT_SITES|
+                                                                                          EMIT_ALL_SITES)
+ -allSitePLs,--allSitePLs                                                                 Annotate all sites with PLs
+ -gcpHMM,--gcpHMM <gcpHMM>                                                                Flat gap continuation penalty
+                                                                                          for use in the Pair HMM
+ -globalMAPQ,--phredScaledGlobalReadMismappingRate                                        The global assumed mismapping
+<phredScaledGlobalReadMismappingRate>                                                     rate for reads
+ -sn,--sample_name <sample_name>                                                          Name of single sample to use
+                                                                                          from a multi-sample bam
+ -kmerSize,--kmerSize <kmerSize>                                                          Kmer size to use in the read
+                                                                                          threading assembler
+ -dontIncreaseKmerSizesForCycles,--dontIncreaseKmerSizesForCycles                         Disable iterating over kmer
+                                                                                          sizes when graph cycles are
+                                                                                          detected
+ -allowNonUniqueKmersInRef,--allowNonUniqueKmersInRef                                     Allow graphs that have
+                                                                                          non-unique kmers in the
+                                                                                          reference
+ -numPruningSamples,--numPruningSamples <numPruningSamples>                               Number of samples that must
+                                                                                          pass the minPruning threshold
+ -minDanglingBranchLength,--minDanglingBranchLength <minDanglingBranchLength>             Minimum length of a dangling
+                                                                                          branch to attempt recovery
+ -consensus,--consensus                                                                   1000G consensus mode
+ -maxNumHaplotypesInPopulation,--maxNumHaplotypesInPopulation                             Maximum number of haplotypes
+<maxNumHaplotypesInPopulation>                                                            to consider for your
+                                                                                          population
+ -minPruning,--minPruning <minPruning>                                                    Minimum support to not prune
+                                                                                          paths in the graph
+ -graph,--graphOutput <graphOutput>                                                       Write debug assembly graph
+                                                                                          information to this file
+ -GQB,--GVCFGQBands <GVCFGQBands>                                                         GQ thresholds for reference
+                                                                                          confidence bands
+ -ERCIS,--indelSizeToEliminateInRefModel <indelSizeToEliminateInRefModel>                 The size of an indel to check
+                                                                                          for in the reference model
+ -mbq,--min_base_quality_score <min_base_quality_score>                                   Minimum base quality required
+                                                                                          to consider a base for calling
+ -allelesTrigger,--useAllelesTrigger                                                      Use additional trigger on
+                                                                                          variants found in an external
+                                                                                          alleles file
+ -doNotRunPhysicalPhasing,--doNotRunPhysicalPhasing                                       Disable physical phasing
+ -dontUseSoftClippedBases,--dontUseSoftClippedBases                                       Do not analyze soft clipped
+                                                                                          bases in the reads
+ -pcrModel,--pcr_indel_model <pcr_indel_model>                                            The PCR indel model to use
+                                                                                          (NONE|HOSTILE|AGGRESSIVE|
+                                                                                          CONSERVATIVE)
+ -maxReadsInRegionPerSample,--maxReadsInRegionPerSample <maxReadsInRegionPerSample>       Maximum reads in an active
+                                                                                          region
+ -minReadsPerAlignStart,--minReadsPerAlignmentStart <minReadsPerAlignmentStart>           Minimum number of reads
+                                                                                          sharing the same alignment
+                                                                                          start for each genomic
+                                                                                          location in an active region
+ -APO,--activityProfileOut <activityProfileOut>                                           Output the raw activity
+                                                                                          profile results in IGV format
+ -ARO,--activeRegionOut <activeRegionOut>                                                 Output the active region to
+                                                                                          this IGV formatted file
+ -AR,--activeRegionIn <activeRegionIn>                                                    Use this interval list file as
+                                                                                          the active regions to process
+ -activeRegionExtension,--activeRegionExtension <activeRegionExtension>                   The active region extension;
+                                                                                          if not provided defaults to
+                                                                                          Walker annotated default
+ -forceActive,--forceActive                                                               If provided, all bases will be
+                                                                                          tagged as active
+ -activeRegionMaxSize,--activeRegionMaxSize <activeRegionMaxSize>                         The active region maximum
+                                                                                          size; if not provided defaults
+                                                                                          to Walker annotated default
+ -bandPassSigma,--bandPassSigma <bandPassSigma>                                           The sigma of the band pass
+                                                                                          filter Gaussian kernel; if not
+                                                                                          provided defaults to Walker
+                                                                                          annotated default
+ -ActProbThresh,--activeProbabilityThreshold <activeProbabilityThreshold>                 Threshold for the probability
+                                                                                          of a profile state being
+                                                                                          active.
+
+Arguments for MalformedReadFilter:
+ -filterRNC,--filter_reads_with_N_cigar           Filter out reads with CIGAR containing the N operator, instead of
+                                                  failing with an error
+ -filterMBQ,--filter_mismatching_base_and_quals   Filter out reads with mismatching numbers of bases and base qualities,
+                                                  instead of failing with an error
+ -filterNoBases,--filter_bases_not_stored         Filter out reads with no stored bases (i.e. '*' where the sequence
+                                                  should be), instead of failing with an error
+
+Available Reference Ordered Data types:
+         Name        FeatureType   Documentation
+         BCF2     VariantContext   (this is an external codec and is not documented within GATK)
+       BEAGLE      BeagleFeature   (this is an external codec and is not documented within GATK)
+          BED         BEDFeature   (this is an external codec and is not documented within GATK)
+     BEDTABLE       TableFeature   (this is an external codec and is not documented within GATK)
+EXAMPLEBINARY            Feature   (this is an external codec and is not documented within GATK)
+     GELITEXT    GeliTextFeature   (this is an external codec and is not documented within GATK)
+    RAWHAPMAP   RawHapMapFeature   (this is an external codec and is not documented within GATK)
+       REFSEQ      RefSeqFeature   (this is an external codec and is not documented within GATK)
+    SAMPILEUP   SAMPileupFeature   (this is an external codec and is not documented within GATK)
+      SAMREAD     SAMReadFeature   (this is an external codec and is not documented within GATK)
+        TABLE       TableFeature   (this is an external codec and is not documented within GATK)
+          VCF     VariantContext   (this is an external codec and is not documented within GATK)
+         VCF3     VariantContext   (this is an external codec and is not documented within GATK)
+
+For a full description of this walker, see its GATKdocs at:
+https://www.broadinstitute.org/gatk/guide/tooldocs/org_broadinstitute_gatk_tools_walkers_haplotypecaller_HaplotypeCaller.php
+
+    ]]></help>
+<citations>
+   <citation type="doi">10.1101/gr.107524.110</citation>
+ </citations> 
+</tool>

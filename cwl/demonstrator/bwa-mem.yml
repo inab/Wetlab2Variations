@@ -1,0 +1,11 @@
+trimmed_fastq: 
+  class: File 
+  path: /mnt/input/U5c_CCGTCC_L001_R1_001.fastq.gz.trimmed.fastq.gz 
+reference_genome:
+  class: File
+  path: /mnt/input/hs37d5.fa
+index_files:
+  type: File
+threads: "8"
+read_group: '@RG\tID:Seq01p\tSM:Seq01\tPL:ILLUMINA\tPI:330'
+sample_name: 'abc1'

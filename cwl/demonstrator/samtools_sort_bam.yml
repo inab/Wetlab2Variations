@@ -1,0 +1,5 @@
+# from BWA mem
+input:
+  class: File
+  path: /mnt/data/input/abc1.sam
+threads: 1

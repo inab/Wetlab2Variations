@@ -1,27 +1,36 @@
 <?xml version="1.0"?>
 <tool id="gatk-HaplotypeCaller" name="gatk-HaplotypeCaller" version="0.1.0" python_template_version="3.5">
+ <macros>
+        <import>gatk_macros.xml</import>
+ </macros>
     <requirements>
-        <container type="docker">cnag/gatk:3.6-0</container>
+        <container type="docker">quay.io/biocontainers/gatk:3.6--5</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-    #set $localinput = 'input.bam'
-    #set $localbai = 'input.bam.bai'
-    #set $localfai = 'reference.fa.fai'
-    #set $localref = 'reference.fa'
-    #set $localdict = 'reference.dict'
-    ln -s '$input' '$localinput' &&
-    ln -s '${input.metadata.bam_index}' '$localbai' &&
-    ln -s '$reference' '$localref' &&
-    ln -s '$reference_fai' '$localfai' &&
-    ln -s '$reference_dict' '$localdict' &&
-    java -jar /opt/gatk/3.6-0/GenomeAnalysisTK.jar -T HaplotypeCaller 
-    -dt NONE -rf BadCigar -ERC GVCF --never_trim_vcf_format_field 
-    -variant_index_type LINEAR -variant_index_parameter 128000
-    -R $localref -I $localinput -o $output
-    ]]></command>
+        #set $localfai = 'reference.fa.fai'
+        #set $localref = 'reference.fa'
+        #if $source.index_source == "history":
+            ln -s '${source.reference}' '$localref' &&
+            ln -s '${source.reference_fai}' '$localfai'  &&
+        #else
+            ln -s '${source.reference.fields.path}' '$localref' &&
+            ln -s '${source.reference.fields.path}.fai' '$localfai' &&
+        #end if
+        #set $localdict = 'reference.dict'
+        ln -s '$reference_dict' '$localdict' &&
+        #set $localinput = 'inputdata.bam'
+        #set $localbai = 'inputdata.bam.bai'
+        ln -s '$input' '$localinput' &&
+        ln -s '${input.metadata.bam_index}' '$localbai' &&
+        ls -lh &&
+        java -jar /opt/gatk/3.6-0/GenomeAnalysisTK.jar -T HaplotypeCaller 
+        -dt NONE -rf BadCigar -ERC GVCF --never_trim_vcf_format_field 
+        -variant_index_type LINEAR -variant_index_parameter 128000
+        -R $localref -I $localinput -o $output
+        ]]>
+    </command>
     <inputs>
-        <param type="data" name="reference" format="fasta" label="Reference Genome"/>
-        <param type="data" name="reference_fai" format="fai" label="Reference Genome index"/>
+        <expand macro="refGenomeSourceConditional"/>
         <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
         <param type="data" name="input" format="bam" label="Input BAM"/>
     </inputs>

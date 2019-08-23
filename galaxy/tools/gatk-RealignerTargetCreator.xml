@@ -10,7 +10,7 @@
         #set $localref = 'reference.fa'
         #set $localdict = 'reference.dict'
         ln -s '$input' '$localinput' &&
-        ln -s '$input_bai' '$localbai' &&
+        ln -s '${input.metadata.bam_index}' '$localbai' &&
         ln -s '$reference' '$localref' &&
         ln -s '$reference_fai' '$localfai' &&
         ln -s '$reference_dict' '$localdict' &&
@@ -22,7 +22,6 @@
         <param type="data" name="reference_fai" format="fai" label="Reference Genome index"/>
         <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
         <param type="data" name="input" format="bam" label="Input BAM"/>
-        <param type="data" name="input_bai" format="bai" label="Input BAM index"/>
         <param type="data" name="knownindels" format="vcf" label="Known InDels"/>
     </inputs>
     <outputs>

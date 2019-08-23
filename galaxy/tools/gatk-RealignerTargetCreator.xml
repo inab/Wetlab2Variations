@@ -4,28 +4,54 @@
         <container type="docker">cnag/gatk:3.6-0</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        #set $localinput = 'input.bam'
-        #set $localbai = 'input.bam.bai'
+        #set $localinput = 'inputdata.bam'
+        #set $localbai = 'inputdata.bam.bai'
         #set $localfai = 'reference.fa.fai'
         #set $localref = 'reference.fa'
         #set $localdict = 'reference.dict'
+        set -e;
+        #if $source.index_source == "history":
+            ln -s '${source.reference}' '$localref' &&
+            ln -s '${source.reference_fai}' '$localfai'  &&
+            ln -s '$reference_dict' '$localdict' &&
+        #else
+            ln -s '${source.reference.fields.path}' '$localref' &&
+            ln -s '${source.reference.fields.path}.fai' '$localfai' &&
+            #set $refname = str($source.reference.fields.path)[:-3] ##cut the .fa extension
+            ln -s '${refname}.dict' '$localdict' &&
+        #end if
         ln -s '$input' '$localinput' &&
         ln -s '${input.metadata.bam_index}' '$localbai' &&
-        ln -s '$reference' '$localref' &&
-        ln -s '$reference_fai' '$localfai' &&
-        ln -s '$reference_dict' '$localdict' &&
+        ls -lh &&
         java -jar /opt/gatk/3.6-0/GenomeAnalysisTK.jar -T RealignerTargetCreator
         -R $localref -I $localinput  --known $knownindels -dt NONE -o $output
     ]]></command>
     <inputs>
-        <param type="data" name="reference" format="fasta" label="Reference Genome"/>
-        <param type="data" name="reference_fai" format="fai" label="Reference Genome index"/>
-        <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
+        <conditional name="source">
+            <param label="Choose the source for the reference genome" name="index_source" type="select">
+                <option value="cached">Use a built-in genome</option>
+                <option value="history">Use a genome from the history</option>
+            </param>
+            <when value="cached">
+                <param name="reference" type="select" label="Using reference genome" help="Select genome from the list">
+                    <options from_data_table="gatk_picard_indexes">
+                        <filter type="sort_by" column="2" />
+                        <validator type="no_options" message="No indexes are available" />
+                    </options>
+                    <validator type="no_options" message="A built-in reference genome is not available for the build associated with the selected input file"/>
+                </param>
+            </when>
+            <when value="history">
+                <param name="reference" type="data" format="fasta" label="Using reference file" />
+                <param name="reference_fai" type="data" format="fai" label="Index of reference file" />
+                <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
+            </when>
+        </conditional>
         <param type="data" name="input" format="bam" label="Input BAM"/>
         <param type="data" name="knownindels" format="vcf" label="Known InDels"/>
     </inputs>
     <outputs>
-        <data name="output" format="interval" label="Realign Intervals" />
+        <data name="output" format="interval" label="Realigner Target Intervals" />
     </outputs>
     <help><![CDATA[
 

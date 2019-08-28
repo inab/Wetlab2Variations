@@ -4,7 +4,7 @@
         <import>gatk_macros.xml</import>
  </macros>
     <requirements>
-        <container type="docker">quay.io/biocontainers/gatk:3.6--5</container>
+        <container type="docker">broadinstitute/gatk3:3.6-0</container>
     </requirements>
     <command detect_errors="exit_code"> <![CDATA[
         #set $localfai = 'reference.fa.fai'
@@ -23,7 +23,7 @@
         ln -s '$input' '$localinput' &&
         ln -s '${input.metadata.bam_index}' '$localbai' &&
         ls -lh &&
-        java -jar /opt/gatk/3.6-0/GenomeAnalysisTK.jar -T RealignerTargetCreator
+        java -jar GenomeAnalysisTK.jar -T RealignerTargetCreator
         -R $localref -I $localinput  --known $knownindels -dt NONE -o $output
     ]]></command>
     <inputs>

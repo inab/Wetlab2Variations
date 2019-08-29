@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <tool id="picard-CreateSequenceDictionary" name="picard-CreateSequenceDictionary" version="0.1.0" python_template_version="3.5">
     <requirements>
-        <container type="docker">cnag/picard:2.18.25</container>
+        <container type="docker">quay.io/biocontainers/picard:2.18.25--0</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         #set $localref = 'reference.fa'
@@ -10,7 +10,7 @@
         #else
             ln -s '${source.reference.fields.path}' '$localref' &&
         #end if
-        java -jar /opt/picard/2.18.25/picard.jar CreateSequenceDictionary  R=$localref O=tempfile &&
+        picard CreateSequenceDictionary  R=$localref O=tempfile &&
         mv tempfile $output
     ]]></command>
     <inputs>

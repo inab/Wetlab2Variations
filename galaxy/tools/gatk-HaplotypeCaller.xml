@@ -7,23 +7,8 @@
         <container type="docker">broadinstitute/gatk3:3.6-0</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        #set $localfai = 'reference.fa.fai'
-        #set $localref = 'reference.fa'
-        #if $source.index_source == "history":
-            ln -s '${source.reference}' '$localref' &&
-            ln -s '${source.reference_fai}' '$localfai'  &&
-        #else
-            ln -s '${source.reference.fields.path}' '$localref' &&
-            ln -s '${source.reference.fields.path}.fai' '$localfai' &&
-        #end if
-        #set $localdict = 'reference.dict'
-        ln -s '$reference_dict' '$localdict' &&
-        #set $localinput = 'inputdata.bam'
-        #set $localbai = 'inputdata.bam.bai'
-        ln -s '$input' '$localinput' &&
-        ln -s '${input.metadata.bam_index}' '$localbai' &&
-        ls -lh &&
-        java -jar GenomeAnalysisTK.jar -T HaplotypeCaller 
+        @set_reference_fasta_filename@
+        java -jar /usr/GenomeAnalysisTK.jar -T HaplotypeCaller 
         -dt NONE -rf BadCigar -ERC GVCF --never_trim_vcf_format_field 
         -variant_index_type LINEAR -variant_index_parameter 128000
         -R $localref -I $localinput -o $output
@@ -31,7 +16,6 @@
     </command>
     <inputs>
         <expand macro="refGenomeSourceConditional"/>
-        <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
         <param type="data" name="input" format="bam" label="Input BAM"/>
     </inputs>
     <outputs>

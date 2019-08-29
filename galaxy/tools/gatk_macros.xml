@@ -7,7 +7,7 @@
             </param>
             <when value="cached">
                 <param name="reference" type="select" label="Using reference genome" help="Select genome from the list">
-                    <options from_data_table="fasta_indexes">
+                    <options from_data_table="picard_indexes">
                         <filter type="sort_by" column="2" />
                         <validator type="no_options" message="No indexes are available" />
                     </options>
@@ -17,9 +17,35 @@
             <when value="history">
                 <param name="reference" type="data" format="fasta" label="Using reference file" />
                 <param name="reference_fai" type="data" format="fai" label="Index of reference file" />
+                <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
             </when>
         </conditional>
     </xml>
+
+
+
+    <token name="@set_reference_fasta_filename@">
+    <![CDATA[
+        #set $localfai = 'reference.fa.fai'
+        #set $localref = 'reference.fa'
+        #set $localdict = 'reference.dict'
+        #if $source.index_source == "history":
+            ln -s '${source.reference}' '$localref' &&
+            ln -s '${source.reference_fai}' '$localfai'  &&
+            ln -s '${reference_dict}' '$localdict' &&
+        #else
+            ln -s '${source.reference.fields.path}' '$localref' &&
+            ln -s '${source.reference.fields.path}.fai' '$localfai' &&
+            #set $reference_dict = $source.reference.fields.path[:-3] ##remove the .fa
+            ln -s '${reference_dict}.dict' '${localdict}' &&
+        #end if
+        #set $localinput = 'inputdata.bam'
+        #set $localbai = 'inputdata.bam.bai'
+        ln -s '$input' '$localinput' &&
+        ln -s '${input.metadata.bam_index}' '$localbai' &&
+        ls -lh &&
+    ]]>
+    </token>
 </macros> 
 
 

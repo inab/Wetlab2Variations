@@ -7,28 +7,12 @@
         <container type="docker">broadinstitute/gatk3:3.6-0</container>
     </requirements>
     <command detect_errors="exit_code"> <![CDATA[
-        #set $localfai = 'reference.fa.fai'
-        #set $localref = 'reference.fa'
-        #if $source.index_source == "history":
-            ln -s '${source.reference}' '$localref' &&
-            ln -s '${source.reference_fai}' '$localfai'  &&
-        #else
-            ln -s '${source.reference.fields.path}' '$localref' &&
-            ln -s '${source.reference.fields.path}.fai' '$localfai' &&
-        #end if
-        #set $localdict = 'reference.dict'
-        ln -s '$reference_dict' '$localdict' &&
-        #set $localinput = 'inputdata.bam'
-        #set $localbai = 'inputdata.bam.bai'
-        ln -s '$input' '$localinput' &&
-        ln -s '${input.metadata.bam_index}' '$localbai' &&
-        ls -lh &&
-        java -jar GenomeAnalysisTK.jar -T RealignerTargetCreator
+        @set_reference_fasta_filename@
+        java -jar /usr/GenomeAnalysisTK.jar -T RealignerTargetCreator
         -R $localref -I $localinput  --known $knownindels -dt NONE -o $output
     ]]></command>
     <inputs>
         <expand macro="refGenomeSourceConditional"/>
-        <param type="data" name="reference_dict" format="sam" label="Reference Genome dictionary"/>
         <param type="data" name="input" format="bam" label="Input BAM"/>
         <param type="data" name="knownindels" format="vcf" label="Known InDels"/>
     </inputs>

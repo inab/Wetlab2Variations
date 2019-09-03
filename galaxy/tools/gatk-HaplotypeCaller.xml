@@ -19,7 +19,7 @@
         <param type="data" name="input" format="bam" label="Input BAM"/>
     </inputs>
     <outputs>
-        <data name="output" format="gvcf" label="Raw Variants"/>
+        <data name="output" format="gvcf" label="${tool.name} on ${on_string}: Raw Variants"/>
     </outputs>
     <help><![CDATA[
 --------------------------------------------------------------------------------

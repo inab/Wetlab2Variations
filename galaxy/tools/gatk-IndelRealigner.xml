@@ -8,6 +8,7 @@
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         @set_reference_fasta_filename@
+        #set $localintervals = 'target.intervals'
         ln -s '$intervals' '$localintervals' &&
         java -jar /usr/GenomeAnalysisTK.jar -T IndelRealigner
         -R $localref -targetIntervals $localintervals -I $localinput -dt NONE -o $output
@@ -19,7 +20,7 @@
         <param type="data" name="intervals" format="interval" label="Realign Intervals"/>
     </inputs>
     <outputs>
-        <data name="output" format="bam" label="Realigned Indel Intervals"/>
+        <data name="output" format="bam" label="${tool.name} on ${on_string}: Realigned Indel Intervals"/>
     </outputs>
     <help><![CDATA[
 

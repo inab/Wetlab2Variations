@@ -15,8 +15,8 @@
         <param name="input" type="data" format="bam" label="Input sorted BAM" />
     </inputs>
     <outputs>
-        <data name="output" format="bam" label="MarkDuplicates BAM output"/>
-        <data name="metrics" format="txt" label="Metrics"/>
+        <data name="output" format="bam" label="${tool.name} on ${on_string}: MarkDuplicates BAM output"/>
+        <data name="metrics" format="txt" label="${tool.name} on ${on_string}: Metrics"/>
     </outputs>
     <help><![CDATA[
 

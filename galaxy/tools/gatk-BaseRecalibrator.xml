@@ -21,7 +21,7 @@
         <param type="data" name="known_sites" format="vcf" label="Known sites" multiple="true"/>
     </inputs>
     <outputs>
-        <data name="output" format="table" label="Recalibration Table"/>
+        <data name="output" format="table" label="${tool.name} on ${on_string}: Recalibration Table"/>
     </outputs>
     <help><![CDATA[
 --------------------------------------------------------------------------------

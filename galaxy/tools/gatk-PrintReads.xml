@@ -20,7 +20,7 @@
         <param type="data" name="recalibration" format="table" label="Recalibration Table"/>
     </inputs>
     <outputs>
-        <data name="output" format="bam" label="Recalibrated BAM"/>
+        <data name="output" format="bam" label="${tool.name} on ${on_string}: Recalibrated BAM"/>
     </outputs>
     <help><![CDATA[
 

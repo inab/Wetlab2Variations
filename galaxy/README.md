@@ -192,4 +192,5 @@ CONTAINER ID        IMAGE                        COMMAND                  CREATE
 ## Final notes
 
 You might have seen that GATK is not configured to use a Docker contianer from BioContainers.
-This is due, as mentioned before, to licensing issues in GATK version 3 that are resolved in GATK 4.
+This is due, as mentioned before, to licensing issues in GATK version 3.
+Those issues should be resolved in GATK 4.

@@ -1,4 +1,0 @@
-class: DockerRequirement
-dockerPull: cnag/bwa:0.7.17
-dockerFile: >
-  $import: bwa-Dockerfile

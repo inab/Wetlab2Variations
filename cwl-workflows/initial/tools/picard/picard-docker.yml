@@ -1,4 +1,0 @@
-class: DockerRequirement
-dockerPull: cnag/picard:2.18.25
-dockerFile: >
-  $import: picard-Dockerfile

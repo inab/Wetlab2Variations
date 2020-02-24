@@ -11,7 +11,7 @@ requirements:
   - class: InlineJavascriptRequirement
   - class: MultipleInputFeatureRequirement
   - class: DockerRequirement
-    dockerPull: cnag/bwa:0.7.17
+    dockerPull: quay.io/biocontainers/bwa:0.7.17--h84994c4_5
   - class: ResourceRequirement
     outdirMin: 10500
     tmpdirMin: 10700

@@ -14,6 +14,8 @@ inputs:
     type: File
   - id: chromosome
     type: string?
+  - id: threads
+    type: string?
   - id: readgroup_str
     type: string
   - id: sample_name

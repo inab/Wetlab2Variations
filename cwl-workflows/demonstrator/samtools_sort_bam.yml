@@ -2,4 +2,4 @@
 input:
   class: File
   path: /mnt/data/input/abc1.sam
-threads: 1
+threads: "1"

@@ -24,7 +24,7 @@ inputs:
       position: 2
   - id: threads
     type: string?
-    default: 8
+    default: "8"
     inputBinding: 
       position: 1
       prefix: '--threads'

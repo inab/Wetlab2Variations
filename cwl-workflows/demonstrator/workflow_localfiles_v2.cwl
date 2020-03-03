@@ -2,7 +2,7 @@
 
 cwlVersion: v1.0
 class: Workflow
-id: rd_connect
+# id: rd_connect
 label: RD_Connect
 
 inputs:

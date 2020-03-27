@@ -1,6 +1,6 @@
 class: Workflow
 cwlVersion: v1.0
-id: rd_connect
+# id: rd_connect
 label: RD_Connect
 
 inputs:
@@ -15,9 +15,9 @@ inputs:
   - id: readgroup_str
     type: string
   - id: chromosome
-    type: string?
+    type: string
   - id: threads
-    type: string?
+    type: string
   - id: sample_name
     type: string
 
@@ -109,7 +109,6 @@ steps:
     out:
       - id: index_fai
     run: samtools_index.cwl
-
 
   - id: bwa_mem
     in:
@@ -236,7 +235,6 @@ steps:
       - id: bqsr_bam
     run: gatk-base_recalibration_print_reads.cwl
     label: gatk-base_recalibration_print_reads
-
 
   - id: gatk_haplotype_caller
     in:

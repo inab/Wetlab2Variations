@@ -1,9 +1,12 @@
-#!/usr/bin/env cwl-runner
-
-cwlVersion: v1.0
 class: Workflow
-# id: rd_connect
+cwlVersion: v1.0
 label: RD_Connect
+
+$namespaces:
+  s: 'http://schema.org/'
+s:license: "https://www.apache.org/licenses/LICENSE-2.0"
+s:copyrightHolder: "BSC - Barcelona Supercomputing Center, 2020"
+s:author: "Laura Rodriguez-Navas"
 
 inputs:
   - id: fastq_files
@@ -15,14 +18,13 @@ inputs:
   - id: known_sites_file
     type: File
   - id: chromosome
-    # type: string?
     type: string
   - id: readgroup_str
     type: string
   - id: sample_name
     type: string
 
-outputs: 
+outputs:
   - id: metrics
     outputSource:
      - picard_markduplicates/output_metrics
@@ -68,7 +70,7 @@ steps:
       - id: raw_sequences
         source:
           - fastq_files
-    out: 
+    out:
       - id: trimmed_fastq
     run: cutadapt-v.1.18.cwl
 
@@ -118,11 +120,11 @@ steps:
     out:
       - id: sorted_bam
     run: samtools_sort_bam.cwl
-   
+
   - id: picard_markduplicates
     in:
       - id: input
-        source: 
+        source:
           - samtools_sort/sorted_bam
     out:
       - id: md_bam
@@ -134,10 +136,10 @@ steps:
   - id: gatk3-rtc
     in:
       - id: input
-        source: 
+        source:
           - picard_markduplicates/md_bam
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -153,13 +155,13 @@ steps:
   - id: gatk-ir
     in:
       - id: input
-        source: 
+        source:
           - picard_markduplicates/md_bam
       - id: rtc_intervals
-        source: 
+        source:
           - gatk3-rtc/rtc_intervals_file
       - id: reference_genome
-        source: 
+        source:
            - samtools_index/index_fai
       - id: dict
         source:
@@ -172,7 +174,7 @@ steps:
   - id: gatk-base_recalibration
     in:
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -187,14 +189,14 @@ steps:
         source:
           - known_indels_file
     out:
-      - id: br_model 
+      - id: br_model
     run: gatk-base_recalibration.cwl
     label: gatk-base_recalibration
 
   - id: gatk-base_recalibration_print_reads
     in:
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -214,7 +216,7 @@ steps:
   - id: gatk_haplotype_caller
     in:
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -223,7 +225,7 @@ steps:
         source:
           - gatk-base_recalibration_print_reads/bqsr_bam
       - id: chromosome
-        source: 
+        source:
           - chromosome
     out:
       - id: gvcf

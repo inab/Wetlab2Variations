@@ -1,6 +1,5 @@
 class: Workflow
 cwlVersion: v1.0
-id: rd_connect
 label: RD_Connect
 
 inputs:
@@ -13,7 +12,7 @@ inputs:
   - id: known_sites_file
     type: File
   - id: chromosome
-    type: string?
+    type: string
   - id: readgroup_str
     type: string
   - id: sample_name
@@ -30,7 +29,6 @@ outputs:
     type: File
 
 steps:
-
   - id: unzipped_known_sites
     in:
       - id: known_sites_file
@@ -87,7 +85,6 @@ steps:
       - id: index_fai
     run: samtools_index.cwl
 
-
   - id: bwa_mem
     in:
 
@@ -126,7 +123,6 @@ steps:
       - id: output_metrics
     run: picard_markduplicates.cwl
     label: picard-MD
-
 
   - id: gatk3-rtc
     in:
@@ -206,7 +202,6 @@ steps:
       - id: bqsr_bam
     run: gatk-base_recalibration_print_reads.cwl
     label: gatk-base_recalibration_print_reads
-
 
   - id: gatk_haplotype_caller
     in:

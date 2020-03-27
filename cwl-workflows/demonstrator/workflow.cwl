@@ -1,6 +1,6 @@
 class: Workflow
 cwlVersion: v1.0
-# id: rd_connect
+id: rd_connect
 label: RD_Connect
 
 inputs:
@@ -15,9 +15,9 @@ inputs:
   - id: readgroup_str
     type: string
   - id: chromosome
-    type: string
+    type: string?
   - id: threads
-    type: string
+    type: string?
   - id: sample_name
     type: string
 
@@ -28,7 +28,7 @@ steps:
     in:
       - id: curl_config_file
         source: curl_fastq_urls
-    out: 
+    out:
       - id: in_files
     run: curl.cwl
 
@@ -36,7 +36,7 @@ steps:
     in:
       - id: curl_config_file
         source: curl_reference_genome_url
-    out: 
+    out:
       - id: in_files
     run: curl.cwl
 
@@ -88,7 +88,7 @@ steps:
       - id: raw_sequences
         source:
           - fastqs_in/in_files
-    out: 
+    out:
       - id: trimmed_fastq
     run: cutadapt-v.1.18.cwl
 
@@ -110,6 +110,7 @@ steps:
       - id: index_fai
     run: samtools_index.cwl
 
+
   - id: bwa_mem
     in:
       - id: trimmed_fastq
@@ -125,7 +126,7 @@ steps:
         source:
           - bwa_index/output
       - id: threads
-        source: 
+        source:
           - threads
     out:
       - id: aligned_sam
@@ -142,11 +143,11 @@ steps:
     out:
       - id: sorted_bam
     run: samtools_sort_bam.cwl
-   
+
   - id: picard_markduplicates
     in:
       - id: input
-        source: 
+        source:
           - samtools_sort/sorted_bam
     out:
       - id: md_bam
@@ -157,10 +158,10 @@ steps:
   - id: gatk3-rtc
     in:
       - id: input
-        source: 
+        source:
           - picard_markduplicates/md_bam
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -176,13 +177,13 @@ steps:
   - id: gatk-ir
     in:
       - id: input
-        source: 
+        source:
           - picard_markduplicates/md_bam
       - id: rtc_intervals
-        source: 
+        source:
           - gatk3-rtc/rtc_intervals_file
       - id: reference_genome
-        source: 
+        source:
            - samtools_index/index_fai
       - id: dict
         source:
@@ -195,7 +196,7 @@ steps:
   - id: gatk-base_recalibration
     in:
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -220,7 +221,7 @@ steps:
   - id: gatk-base_recalibration_print_reads
     in:
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -236,10 +237,11 @@ steps:
     run: gatk-base_recalibration_print_reads.cwl
     label: gatk-base_recalibration_print_reads
 
+
   - id: gatk_haplotype_caller
     in:
       - id: reference_genome
-        source: 
+        source:
           - samtools_index/index_fai
       - id: dict
         source:
@@ -248,10 +250,10 @@ steps:
         source:
           - gatk-base_recalibration_print_reads/bqsr_bam
       - id: chromosome
-        source: 
+        source:
           - chromosome
       - id: threads
-        source: 
+        source:
           - threads
     out:
       - id: gvcf

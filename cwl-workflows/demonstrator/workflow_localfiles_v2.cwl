@@ -15,7 +15,8 @@ inputs:
   - id: known_sites_file
     type: File
   - id: chromosome
-    type: string?
+    # type: string?
+    type: string
   - id: readgroup_str
     type: string
   - id: sample_name

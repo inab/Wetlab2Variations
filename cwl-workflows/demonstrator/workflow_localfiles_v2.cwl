@@ -2,12 +2,6 @@ class: Workflow
 cwlVersion: v1.0
 label: RD_Connect
 
-$namespaces:
-  s: 'http://schema.org/'
-s:license: "https://www.apache.org/licenses/LICENSE-2.0"
-s:copyrightHolder: "BSC - Barcelona Supercomputing Center, 2020"
-s:author: "Laura Rodriguez-Navas"
-
 inputs:
   - id: fastq_files
     type: File[]

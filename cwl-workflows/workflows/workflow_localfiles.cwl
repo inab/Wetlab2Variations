@@ -2,24 +2,31 @@ class: Workflow
 cwlVersion: v1.0
 label: RD_Connect
 
+requirements:
+  - class: MultipleInputFeatureRequirement
+
+$namespaces:
+  s: https://schema.org/
+  edam: http://edamontology.org/
+
+$schemas:
+ - https://schema.org/version/latest/schema.rdf
+ - http://edamontology.org/EDAM_1.18.owl
+
 inputs:
-  fastq_files: {type: 'File[]', doc: "List of input FASTQ files"}
+  fastq_files: {type: 'File[]', doc: "List of paired-end input FASTQ files"}
   reference_genome: {type: 'File[]', doc: "Compress FASTA files with the reference genome chromosomes"}
-  known_indels_file: {type: 'File', doc: "VCF file correlated to reference genome assembly with known indels"}
-  known_sites_file: {type: 'File', doc: "VCF file correlated to reference genome assembly with know sites (for instance dbSNP)"}
+  known_indels_file: {type: File, doc: "VCF file correlated to reference genome assembly with known indels"}
+  known_sites_file: {type: File, doc: "VCF file correlated to reference genome assembly with know sites (for instance dbSNP)"}
   chromosome: {type: 'string?', doc: "Label of the chromosome to be used for the analysis. By default all the chromosomes are used"}
   readgroup_str: {type: string, default: '@RG\tID:Seq01p\tSM:Seq01\tPL:ILLUMINA\tPI:330', doc: "Parsing header which should correlate to FASTQ files"}
   sample_name: {type: 'string?', default: "ABC3", doc: "Sample name"}
 
 outputs: 
-  - id: metrics
-    outputSource:
-     - picard_markduplicates/output_metrics
-    type: File
-  - id: gvcf
-    outputSource:
-     - gatk_haplotype_caller/gvcf
-    type: File
+  metrics: {type: File, outputSource: picard_markduplicates/output_metrics, doc: "Several metrics about the result"}
+  gvcf: {type: File, outputSource: gatk_haplotype_caller/gvcf, doc: "unannotated gVCF output file from the mapping and variant calling pipeline"}
+
+author:
 
 steps:
   - id: unzipped_known_sites
@@ -215,5 +222,42 @@ steps:
     run: ../tools/gatk-haplotype_caller.cwl
     label: gatk-haplotype_caller
 
-requirements:
-  - class: MultipleInputFeatureRequirement
+s:author:
+  - class: s:Person
+    s:identifier: https://orcid.org/0000-0001-7893-2404
+    s:email: mailto:raul.tonda@cnag.crg.cat
+    s:name: Raul Tonda
+  - class: s:Person
+    s:identifier: https://orcid.org/0000-0003-0807-2570
+    s:email: mailto:leslie.matalonga@cnag.crg.eu
+    s:name: Leslie Matalonga
+  - class: s:Person
+    s:identifier: https://orcid.org/0000-0003-1687-2754
+    s:email: mailto:varma@ebi.ac.uk
+    s:name: Susheel Varma
+
+s:contributor:
+  - class: s:Person
+    s:identifier: http://orcid.org/0000-0002-7681-6415
+    s:email: mailto:jarno.laitinen@csc.fi
+    s:name: Jarno Laitinen
+  - class: s:Person
+    s:email: mailto:aniewielska@ebi.ac.uk
+    s:name: Ania Niewielska
+  - class: s:Person
+    s:identifier: https://orcid.org/0000-0002-3468-0652
+    s:email: mailto:alexander.kanitz@unibas.ch
+    s:name: Alex Kanitz
+  - class: s:Person
+    s:identifier: https://orcid.org/0000-0002-4806-5140
+    s:email: mailto:jose.m.fernandez@bsc.es
+    s:name: José M. Fernández
+  - class: s:Person
+    s:identifier: https://orcid.org/0000-0003-4929-1219
+    s:email: mailto:laura.rodriguez@bsc.es
+    s:name: Laura Rodríguez-Navas
+
+s:citation: https://dx.doi.org/10.1002/humu.23114
+s:codeRepository: https://github.com/inab/Wetlab2Variations/
+s:dateCreated: "2019-03-06"
+s:license: https://spdx.org/licenses/Apache-2.0

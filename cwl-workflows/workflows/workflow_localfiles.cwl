@@ -3,20 +3,13 @@ cwlVersion: v1.0
 label: RD_Connect
 
 inputs:
-  - id: fastq_files
-    type: File[]
-  - id: reference_genome
-    type: File[]
-  - id: known_indels_file
-    type: File
-  - id: known_sites_file
-    type: File
-  - id: chromosome
-    type: string
-  - id: readgroup_str
-    type: string
-  - id: sample_name
-    type: string
+  fastq_files: {type: 'File[]', doc: "List of input FASTQ files"}
+  reference_genome: {type: 'File[]', doc: "Compress FASTA files with the reference genome chromosomes"}
+  known_indels_file: {type: 'File', doc: "VCF file correlated to reference genome assembly with known indels"}
+  known_sites_file: {type: 'File', doc: "VCF file correlated to reference genome assembly with know sites (for instance dbSNP)"}
+  chromosome: {type: 'string?', doc: "Label of the chromosome to be used for the analysis. By default all the chromosomes are used"}
+  readgroup_str: {type: string, default: '@RG\tID:Seq01p\tSM:Seq01\tPL:ILLUMINA\tPI:330', doc: "Parsing header which should correlate to FASTQ files"}
+  sample_name: {type: 'string?', default: "ABC3", doc: "Sample name"}
 
 outputs: 
   - id: metrics
@@ -36,7 +29,7 @@ steps:
           - known_sites_file
     out:
       - id: unzipped_known_sites_file
-    run: gunzip_known_sites.cwl
+    run: ../tools/gunzip_known_sites.cwl
 
   - id: gunzip
     in:
@@ -45,7 +38,7 @@ steps:
           - reference_genome
     out:
       - id: unzipped_fasta
-    run: gunzip.cwl
+    run: ../tools/gunzip.cwl
 
   - id: picard_dictionary
     # from samtools reference genome
@@ -56,7 +49,7 @@ steps:
     # produced .dict file
     out:
       - id: dict
-    run: picard_dictionary.cwl
+    run: ../tools/picard_dictionary.cwl
 
   - id: cutadapt2
     in:
@@ -65,7 +58,7 @@ steps:
           - fastq_files
     out: 
       - id: trimmed_fastq
-    run: cutadapt-v.1.18.cwl
+    run: ../tools/cutadapt-v.1.18.cwl
 
   - id: bwa_index
     in:
@@ -74,7 +67,7 @@ steps:
           - gunzip/unzipped_fasta
     out:
       - id: output
-    run: bwa-index.cwl
+    run: ../tools/bwa-index.cwl
 
   - id: samtools_index
     in:
@@ -83,7 +76,7 @@ steps:
           - gunzip/unzipped_fasta
     out:
       - id: index_fai
-    run: samtools_index.cwl
+    run: ../tools/samtools_index.cwl
 
   - id: bwa_mem
     in:
@@ -102,7 +95,7 @@ steps:
           - bwa_index/output
     out:
       - id: aligned_sam
-    run: bwa-mem.cwl
+    run: ../tools/bwa-mem.cwl
 
   - id: samtools_sort
     in:
@@ -111,7 +104,7 @@ steps:
           - bwa_mem/aligned_sam
     out:
       - id: sorted_bam
-    run: samtools_sort_bam.cwl
+    run: ../tools/samtools_sort_bam.cwl
    
   - id: picard_markduplicates
     in:
@@ -121,7 +114,7 @@ steps:
     out:
       - id: md_bam
       - id: output_metrics
-    run: picard_markduplicates.cwl
+    run: ../tools/picard_markduplicates.cwl
     label: picard-MD
 
   - id: gatk3-rtc
@@ -140,7 +133,7 @@ steps:
           - known_indels_file
     out:
       - id: rtc_intervals_file
-    run: gatk3-rtc.cwl
+    run: ../tools/gatk3-rtc.cwl
     label: gatk3-rtc
 
   - id: gatk-ir
@@ -159,7 +152,7 @@ steps:
           - picard_dictionary/dict
     out:
       - id: realigned_bam
-    run: gatk-ir.cwl
+    run: ../tools/gatk-ir.cwl
     label: gatk-ir
 
   - id: gatk-base_recalibration
@@ -181,7 +174,7 @@ steps:
           - known_indels_file
     out:
       - id: br_model 
-    run: gatk-base_recalibration.cwl
+    run: ../tools/gatk-base_recalibration.cwl
     label: gatk-base_recalibration
 
   - id: gatk-base_recalibration_print_reads
@@ -200,7 +193,7 @@ steps:
           - gatk-base_recalibration/br_model
     out:
       - id: bqsr_bam
-    run: gatk-base_recalibration_print_reads.cwl
+    run: ../tools/gatk-base_recalibration_print_reads.cwl
     label: gatk-base_recalibration_print_reads
 
   - id: gatk_haplotype_caller
@@ -219,7 +212,7 @@ steps:
           - chromosome
     out:
       - id: gvcf
-    run: gatk-haplotype_caller.cwl
+    run: ../tools/gatk-haplotype_caller.cwl
     label: gatk-haplotype_caller
 
 requirements:

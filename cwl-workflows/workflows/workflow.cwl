@@ -21,6 +21,7 @@ inputs:
   chromosome: {type: string, doc: "Label of the chromosome to be used for the analysis. By default all the chromosomes are used"}
   readgroup_str: {type: string, default: '@RG\tID:Seq01p\tSM:Seq01\tPL:ILLUMINA\tPI:330', doc: "Parsing header which should correlate to FASTQ files"}
   sample_name: {type: string, default: 'ABC3', doc: "Sample name"}
+  gqb: {type: 'int[]', default: [20, 25, 30, 35, 40, 45, 50, 70, 90, 99], doc: "Exclusive upper bounds for reference confidence GQ bands (must be in [1, 100] and specified in increasing order)"}
 
 outputs: 
   metrics: {type: File, outputSource: picard_markduplicates/output_metrics, doc: "Several metrics about the result"}

@@ -10,7 +10,7 @@ $namespaces:
   edam: http://edamontology.org/
 
 $schemas:
- - https://schema.org/version/latest/schema.rdf
+ - https://schema.org/version/latest/schemaorg-current-https.rdf
  - http://edamontology.org/EDAM_1.18.owl
 
 inputs:
@@ -18,15 +18,13 @@ inputs:
   reference_genome: {type: 'File[]', doc: "Compress FASTA files with the reference genome chromosomes"}
   known_indels_file: {type: File, doc: "VCF file correlated to reference genome assembly with known indels"}
   known_sites_file: {type: File, doc: "VCF file correlated to reference genome assembly with know sites (for instance dbSNP)"}
-  chromosome: {type: 'string?', doc: "Label of the chromosome to be used for the analysis. By default all the chromosomes are used"}
+  chromosome: {type: string, doc: "Label of the chromosome to be used for the analysis. By default all the chromosomes are used"}
   readgroup_str: {type: string, default: '@RG\tID:Seq01p\tSM:Seq01\tPL:ILLUMINA\tPI:330', doc: "Parsing header which should correlate to FASTQ files"}
-  sample_name: {type: 'string?', default: "ABC3", doc: "Sample name"}
+  sample_name: {type: string, default: 'ABC3', doc: "Sample name"}
 
 outputs: 
   metrics: {type: File, outputSource: picard_markduplicates/output_metrics, doc: "Several metrics about the result"}
   gvcf: {type: File, outputSource: gatk_haplotype_caller/gvcf, doc: "unannotated gVCF output file from the mapping and variant calling pipeline"}
-
-author:
 
 steps:
   - id: unzipped_known_sites

@@ -218,7 +218,7 @@ steps:
           - chromosome
       - id: gqb
         source:
-	  - gqb
+          - gqb
     out:
       - id: gvcf
     run: ../tools/gatk-haplotype_caller.cwl

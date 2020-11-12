@@ -1,61 +1,6 @@
 #!/usr/bin/env nextflow
-// region params
-params.cutadapt = [
-    cores:          16,
-    adapter:        "",
-    extraargs:      "",
-    adapterfile:    ""
-]
 
-params.bwaindex = [
-    blocksize: 5000000000,
-    extraargs: ""
-]
-
-params.bwamem = [
-    cores:      8,
-    extraargs:  "",
-    rgheader:   "@RG\\tID:H947YADXX\\tSM:NA12878\\tPL:ILLUMINA"
-]
-
-params.sambamba = [
-    cores:              8,
-    compressionlevel:   9,
-    memorylevelhint:    "16GB",
-    extraargs:          ""
-]
-
-params.GATK = [
-    bundle: "${baseDir}/../test/"
-]
-
-params.BSQR = [
-    files : [ 
-        "${baseDir}/../test/dbsnp_138.b37.vcf",
-        "${baseDir}/../test/Mills_and_1000G_gold_standard.indels.b37.vcf"
-    ]
-]
-
-params.general = [
-    rawreads:           "${baseDir}/../test/U5c_CCGTCC_L001_R{1,2}_001.fastq.gz",
-    referencegenome:    "${baseDir}/../test/hs37d5.fa.gz",
-    paramsout:          "${baseDir}/param-files/${workflow.runName}.json",
-    itermediate: [
-        referencegenomeindexpath: "${baseDir}/../test/"
-    ]
-]
-
-params.bwahaplotyper = [
-    cputhreads: 8,
-    extraargs: "",
-    erc: "GVCF",
-    variantindextype: "LINEAR",
-    variantindexparam: 128000,
-    gqb: [20, 25, 30, 35, 40, 45, 50, 70, 90, 99],
-    minquality: 10
-]
-// endregion params
-
+// Default param values have been moved to nextflow.config
 reference = file(params.general.referencegenome)
 
 // Channels
@@ -284,6 +229,7 @@ PrintConfiguration()
 // Processes
 process adaptorRemoval {
 	tag "Adaptor removal"
+	container "quay.io/biocontainers/cutadapt:1.18--py36h14c3975_1"
 
 	input: 
 		set file(read1), file(read2) from samples_ch.collect()
@@ -358,6 +304,7 @@ if (!providedReferenceGenomeIndex) {
 
 process referenceGenomeIndexing {
 	tag "Genome Indexing"
+	container "quay.io/biocontainers/bwa:0.7.17--h84994c4_5"
 
     when:
         !providedReferenceGenomeIndex
@@ -395,6 +342,7 @@ produced_index_sa   .mix(provided_index_sa)     .first()    .set{final_index_sa}
 
 process genomeMapping {
 	tag "Genome Mapping"
+	container "quay.io/biocontainers/bwa:0.7.17--h84994c4_5"
 
 	input: 
 		file reference
@@ -422,6 +370,7 @@ process genomeMapping {
 
 process samToBam {
 	tag "Sam to Bam"
+	container "quay.io/biocontainers/sambamba:0.6.8--h682856c_1"
 
 	input: 
 		file "${reference.name}.sam" from bwa_mapped
@@ -446,6 +395,7 @@ process samToBam {
 
 process bamSorting {
 	tag "Bam Sorting"
+	container "quay.io/biocontainers/sambamba:0.6.8--h682856c_1"
 
 	input: 
 		file "${reference.name}.bam"            from bwa_mapped_bam
@@ -500,6 +450,7 @@ def getPICARDnewCMD(arguments)
 
 process removeDuplicates {
     tag "Remove Duplicates"
+    container "quay.io/biocontainers/picard:2.18.25--0"
 
 	input: 
 		file "${reference.name}.sorted.bam" 	from bwa_sorted
@@ -531,7 +482,8 @@ process removeDuplicates {
 
 process decompress_reference {
     tag "Decompress reference for GATK"
-
+    container "alpine:3.9"
+    
 	input:
 	    file reference 
 
@@ -539,12 +491,13 @@ process decompress_reference {
 	    file "${reference.baseName}" into decompressed_reference
 
 	"""
-	gunzip --force ${reference}
+	gunzip -c ${reference} > ${reference.baseName}
 	"""
 }
 
 process fastaIndex {
-	tag "Index Reference Genome"
+    tag "Index Reference Genome"
+    container "quay.io/biocontainers/samtools:1.3.1--5"
     input:
   	    file "${reference.baseName}"        from decompressed_reference
   
@@ -558,6 +511,7 @@ process fastaIndex {
 
 process referenceIndexDictionary {
     tag "Create reference dictionary"
+    container "quay.io/biocontainers/picard:2.18.25--0"
     input:
   	    file "${reference.baseName}"                from decompressed_reference
   
@@ -571,6 +525,7 @@ process referenceIndexDictionary {
 
 process noDuplicatesBAMindex {
     tag "Index No-Duplicates BAM"
+    container "quay.io/biocontainers/samtools:1.3.1--5"
     input:
   	    file "${reference.name}.sorted.noDuplicates.bam"        from bwa_noduplicates
   
@@ -583,13 +538,14 @@ process noDuplicatesBAMindex {
 }
 
 // dbsnp = file(params.GATK.bundle + "hg19/dbsnp_135.hg19.no.chr.vcf.gz")
-dbsnp = file("/home/vfernandez/git/Wetlab2Variations/test/dbsnp_138.b37.vcf")
+// dbsnp = file("/home/vfernandez/git/Wetlab2Variations/test/dbsnp_138.b37.vcf")
 
 // mills1000Gindels = file(params.GATK.bundle + "Mills_and_1000G_gold_standard.indels.hg19.no.chr.vcf")
-mills1000Gindels = file("/home/vfernandez/git/Wetlab2Variations/test/Mills_and_1000G_gold_standard.indels.b37.vcf")
+// mills1000Gindels = file("/home/vfernandez/git/Wetlab2Variations/test/Mills_and_1000G_gold_standard.indels.b37.vcf")
 
 process baseQualityRecalibration {
 	tag "Base quality recalibration (BQSR)"
+	container "broadinstitute/gatk3:3.6-0"
 
 	input: 
 		file "${reference.baseName}"                            from decompressed_reference
@@ -629,6 +585,7 @@ process baseQualityRecalibration {
 }
 
 process printReads {
+    container "broadinstitute/gatk3:3.6-0"
     input:
         file "${reference.baseName}"                                    from decompressed_reference
         file "${reference.name}.sorted.noDuplicates.bam"                from bwa_noduplicates
@@ -652,6 +609,7 @@ process printReads {
 }
 
 process variantCalling {
+  container "broadinstitute/gatk3:3.6-0"
   input:
     file "${reference.name}.sorted.noDuplicates.recalibrated.printed.bam"   from bwa_printed
     file "${reference.baseName}"                                            from decompressed_reference

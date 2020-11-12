@@ -8,7 +8,7 @@ baseCommand:
 requirements:
   - class: InlineJavascriptRequirement
   - class: DockerRequirement
-    dockerPull: biocontainers/samtools:1.3.1
+    dockerPull: quay.io/biocontainers/samtools:1.3.1--5
   - class: ResourceRequirement
     outdirMin: 7500
     tmpdirMin: 7700

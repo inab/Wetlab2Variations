@@ -17,14 +17,14 @@ requirements:
     tmpdirMin: 12500
 
 inputs:
-  - id: known_sites_file
+  - id: input
     type: File
     inputBinding:
       position: 1
 
 outputs:
-  - id: unzipped_known_sites_file
+  - id: output
     type: stdout
     #outputBinding:
     #  glob: "*.gvcf"
-stdout: $(inputs.known_sites_file.nameroot)
+stdout: $(inputs.input.nameroot)

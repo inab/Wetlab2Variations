@@ -30,11 +30,14 @@ outputs:
 steps:
   - id: unzipped_known_sites
     in:
-      - id: known_sites_file
-        source:
-          - known_sites_file
-    out:
-      - id: unzipped_known_sites_file
+      input: known_sites_file
+    out: [output]
+    run: ../tools/gunzip_known_sites.cwl
+
+  - id: unzipped_known_indels
+    in:
+      input: known_indels_file
+    out: [output]
     run: ../tools/gunzip_known_sites.cwl
 
   - id: gunzip
@@ -136,7 +139,7 @@ steps:
           - picard_dictionary/dict
       - id: known_indels
         source:
-          - known_indels_file
+          - unzipped_known_indels/output
     out:
       - id: rtc_intervals_file
     run: ../tools/gatk3-rtc.cwl
@@ -174,10 +177,10 @@ steps:
           - gatk-ir/realigned_bam
       - id: unzipped_known_sites_file
         source:
-          - unzipped_known_sites/unzipped_known_sites_file
+          - unzipped_known_sites/output
       - id: known_indels_file
         source:
-          - known_indels_file
+          - unzipped_known_indels/output
     out:
       - id: br_model 
     run: ../tools/gatk-base_recalibration.cwl

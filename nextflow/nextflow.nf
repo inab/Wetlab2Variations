@@ -168,7 +168,7 @@ String parseElement(element)
 def SaveParamsToFile() 
 {
     // Check if we want to produce the params-file for this execution
-    if (isNull(params.general.paramsout) || params.general.paramsout == "")
+    if (params.general.paramsout == null || params.general.paramsout == "")
         return;
 
     // Replace the strings ${baseDir} and ${workflow.runName} with their values
@@ -272,7 +272,7 @@ process adaptorRemoval {
 }
 
 def providedReferenceGenomeIndex = false
-if (params.general.itermediate.referencegenomeindexpath != '')
+if (params.general.itermediate?.referencegenomeindexpath != null && params.general.itermediate.referencegenomeindexpath != '')
 {
     files = new ArrayList()
     for(extension in ["amb", "ann", "bwt", "pac", "sa"])

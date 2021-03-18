@@ -168,7 +168,7 @@ String parseElement(element)
 def SaveParamsToFile() 
 {
     // Check if we want to produce the params-file for this execution
-    if (params.general.paramsout == "")
+    if (isNull(params.general.paramsout) || params.general.paramsout == "")
         return;
 
     // Replace the strings ${baseDir} and ${workflow.runName} with their values

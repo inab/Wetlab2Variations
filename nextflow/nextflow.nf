@@ -13,6 +13,11 @@ Channel
     .set { knownSitesCh }
 
 
+Channel
+    .fromPath( params.BSQR.indexes )
+    .set { knownSitesIdxCh }
+
+
 void ProcessUserInputedArguments()
 {
     def toRemove = []
@@ -552,26 +557,45 @@ process baseQualityRecalibration {
 		file "${reference.name}.sorted.noDuplicates.bam"        from bwa_noduplicates
 		file "${reference.name}.sorted.noDuplicates.bam.bai"    from bwa_noduplicates_bai
 		
-		file "*" from knownSitesCh.collect()
+		file "knownSitesInput/*" from knownSitesCh.collect()
+		file "knownSitesInput/*" from knownSitesIdxCh.collect()
 		file "${reference.baseName}.fai"                        from reference_index
 		file "${reference.getBaseName(2)}.dict"                 from reference_dict
 
 	output:
         file "${reference.name}.sorted.noDuplicates.recalibrated.grp" into bwa_grp
 
-    script:
-        def knownSitesArgBuilder = new StringBuilder()
+//    script:
+//        def knownSitesArgBuilder = new StringBuilder()
+//
+//        for (vcf in params.BSQR.files)
+//        {
+//            knownSitesArgBuilder.append("--knownSites ")
+//            knownSitesArgBuilder.append(vcf)
+//            knownSitesArgBuilder.append(" ")
+//        }
+//
+//        def knownSitesArg = knownSitesArgBuilder.toString()
 
-        for (vcf in params.BSQR.files)
-        {
-            knownSitesArgBuilder.append("--knownSites ")
-            knownSitesArgBuilder.append(vcf)
-            knownSitesArgBuilder.append(" ")
-        }
-
-        def knownSitesArg = knownSitesArgBuilder.toString()
-
-	"""	
+	"""
+	#!/bin/bash
+	mkdir -p knownSites
+	for vcf in knownSitesInput/* ; do
+	    case "\${vcf}" in
+		*.gz)
+		    gunzip -c "\${vcf}" > knownSites/"\$(basename "\${vcf}" .gz)"
+		    ;;
+		*)
+		    ln -sf ../"\${vcf}" knownSites
+		    ;;
+	    esac
+	done
+	
+	knownSitesArg=""
+	for vcf in knownSites/*.vcf ; do
+	    knownSitesArg+=" --knownSites \${vcf}"
+	done
+	
 	java -jar /usr/GenomeAnalysisTK.jar \
 	-T 				BaseRecalibrator \
 	-nct 			8 \
@@ -579,7 +603,7 @@ process baseQualityRecalibration {
 	--input_file 	${reference.name}.sorted.noDuplicates.bam \
 	-dt 			NONE \
     -o  			${reference.name}.sorted.noDuplicates.recalibrated.grp \
-                    ${knownSitesArg}
+                    \${knownSitesArg}
 	"""
 
 }

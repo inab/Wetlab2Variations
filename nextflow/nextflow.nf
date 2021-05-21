@@ -2,6 +2,7 @@
 
 // Default param values have been moved to nextflow.config
 reference = file(params.general.referencegenome)
+outputDir = file(params.outputDir, type: 'dir')
 
 // Channels
 Channel

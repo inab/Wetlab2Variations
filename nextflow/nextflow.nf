@@ -458,7 +458,7 @@ process removeDuplicates {
     tag "Remove Duplicates"
     container "quay.io/biocontainers/picard:2.18.25--0"
     
-    publishDir "${outputDir}", pattern '*.sorted.duplicates.metrics.txt'
+    publishDir "${outputDir}", pattern: '*.sorted.duplicates.metrics.txt'
 
 	input: 
 		file "${reference.name}.sorted.bam" 	from bwa_sorted
@@ -638,7 +638,7 @@ process printReads {
 process variantCalling {
   container "broadinstitute/gatk3:3.6-0"
   
-  publishDir "${outputDir}", pattern '*.sorted.noDuplicates.recalibrated.g.vcf.gz*'
+  publishDir "${outputDir}", pattern: '*.sorted.noDuplicates.recalibrated.g.vcf.gz*'
   
   input:
     file "${reference.name}.sorted.noDuplicates.recalibrated.printed.bam"   from bwa_printed

@@ -1,7 +1,7 @@
 # Rare Disease workflow
 This implementation was done for the ELIXIR EXCELERATE Demonstrator to be run on WES-TES environment.
 
-The main CWL file is workflow.cwl
+The main CWL file is [workflows/workflow.cwl](workflows/workflow.cwl).
 
 The pdf file is a longer explanation of the Demonstrator.
 
@@ -17,4 +17,7 @@ Another user account can be used then to access the files.
 
 The .yml files allow to run each cwl files separately with cwltool. 
 There you need to have in the input files in defined in path.
-Using local files allow faster execution of the pipeline or execution of just a simple task. 
+Using local files allow faster execution of the pipeline or execution of just a simple task.
+
+## Abstract workflow
+The workflow is also represented as an abstract CWL 1.2, where all the steps are Operation records. It is available at [abstract_workflows/workflow.cwl](abstract_workflows/workflow.cwl).

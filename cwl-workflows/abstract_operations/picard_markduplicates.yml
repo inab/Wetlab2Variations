@@ -1,0 +1,3 @@
+input:
+  class: File
+  path: /mnt/input/abc1.sorted.bam

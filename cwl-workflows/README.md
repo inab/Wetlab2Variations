@@ -20,4 +20,4 @@ There you need to have in the input files in defined in path.
 Using local files allow faster execution of the pipeline or execution of just a simple task.
 
 ## Abstract workflow
-The workflow is also represented as an abstract CWL 1.2, where all the steps are Operation records. It is available at [abstract_workflows/workflow.cwl](abstract_workflows/workflow.cwl).
+The workflow is also represented as an abstract CWL 1.2, where all the steps are Operation records. It is available at [abstract_workflows/abstract_workflow.cwl](abstract_workflows/abstract_workflow.cwl), and its conceptual steps are in [abstract_operations](abstract_operations).
